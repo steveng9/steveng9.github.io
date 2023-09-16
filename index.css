@@ -38,7 +38,7 @@
     --pink: #000077;
     --white: #f0e9f2;
     --white-1: #e5e5e6da;
-    --periwinkle: #ccccff;
+    --periwinkle: #aabbff;
 
 
     --container-max-width: 1180px;
@@ -420,7 +420,7 @@ body:not(.user-is-tabbing) a:focus {
 
 .header {
     background: linear-gradient(rgba(100,100,100, .1), rgba(200,200,250, .4)), 
-        url('./images/header.jpg');
+        url('./images/mountain magical owls.png');
     height: 100vh;
     background-size: cover;
     background-position: center;
