@@ -419,7 +419,7 @@ body:not(.user-is-tabbing) a:focus {
 /* --------------------------------------- */
 
 .header {
-    background: linear-gradient(rgba(100,100,100, .1), rgba(200,200,250, .4)), 
+    background: linear-gradient(rgba(50,100,50, 0), rgba(180,180,250, 0)), 
         /*url('./images/mountain magical owls.png');*/
         url('./images/broodingElephants.png');
     height: 100vh;
