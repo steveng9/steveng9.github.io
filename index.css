@@ -35,7 +35,7 @@
     --line-height-small: 1.2;
 
     --black: #000;
-    --pink: #000077;
+    --pink: #005577;
     --white: #f0e9f2;
     --white-1: #e5e5e6da;
     --periwinkle: #aabbff;
@@ -204,6 +204,14 @@ h4 {
 
 a {
     color: var(--white);
+    font-weight: 400;
+    font-family: 'Jost', sans-serif;
+    transition: all .2s;
+    outline: 2px solid transparent;
+}
+
+a2 {
+    color: var(--black);
     font-weight: 400;
     font-family: 'Jost', sans-serif;
     transition: all .2s;
@@ -598,7 +606,7 @@ body:not(.user-is-tabbing) a:focus {
 
 .footer__social-links {
     display: flex;
-    justify-content: center;
+    justify-content: left;
     padding: var(--gutter-normal) 0;
     list-style: none;
 }
