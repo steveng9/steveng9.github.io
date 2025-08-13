@@ -1,395 +1,160 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="shortcut icon" type="image/png" href="./images/fav2.png" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="./images/fav2.png">
+    <script src="research_data.js"></script>
 
-  <!-- Put your site title here -->
-  <title>
-    Steven Golob | Computer Scientist, Tacoma
-  </title>
-
-  <!-- TODO -->
-  <!-- <meta name="description" content="Add small description of yourslef."> -->
-  <!-- Add some coding keywords below, Ex: (React, CSS etc) -->
-  <!-- <meta name="keywords" content="Put your name, skills and some coding keywords" /> -->
-  <link rel="stylesheet" href="index.css" />
+    <title>Steven Golob | Computer Scientist, Tacoma</title>
+    <meta name="description" content="Steven Golob - PhD Computer Science student at UW Tacoma specializing in privacy-preserving machine learning and fair AI">
+    <meta name="keywords" content="Steven Golob, Computer Science, Privacy-Preserving Machine Learning, PPML, Fair AI, UW Tacoma">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-
-  <!-- ***** Header ***** -->
-
-  <header class="header" role="banner" id="top">
-    <div class="row">
-      <nav class="nav" role="navigation">
-        <ul class="nav__items">
-          <li class="nav__item"><a href="#research" class="nav__link">Research</a></li>
-          <li class="nav__item"><a href="#competitions" class="nav__link">Competitions</a></li>
-          <!-- <li class="nav__item"><a href="#projects" class="nav__link">Projects</a></li> -->
-          <li class="nav__item"><a href="#service" class="nav__link">Service</a></li>
-          <li class="nav__item"><a href="#awards" class="nav__link">Awards</a></li>
-          <li class="nav__item"><a href="#about" class="nav__link">About</a></li>
-          <li class="nav__item"><a href="#contact" class="nav__link">Contact</a></li>
-        </ul>
-      </nav>
-    </div>
-    <div class="header__text-box row">
-      <div class="header__text">
-        <h1 class="heading-primary">
-          <span>Steven Golob</span>
-        </h1>
-        <h4>Graduate Student, Computer Scientist, Tacoma, WA.</h4>
-        <a href="#contact" class="btn btn--pink">Get in touch</a>
-      </div>
-    </div>
-  </header>
-
-  <main role="main">
-
-    <!-- ***** Research ***** -->
-
-    <section class="research" id="research">
-      <div class="row">
-        <h2>My Research</h2>
-        <div class="work__boxes">
-
-          <div class="work__text">
-            <h3>Securely Generating Synthetic Genomic Data from Distributed Data Silos</h3>
-            <p>
-              T. Claar, S. Golob, S. Pentyala, G. Sitaraman, M. De Cock, J. Banerjee, L. Foschini. Securely Generating Synthetic Genomic Data from Distributed Data Silos. In: 11th International Workshop on Genome Privacy and Security (GenoPri'24), 2024.
-            </p>
-          </div>
-
-
-          <div class="work__text">
-            <h3>Privacy Vulnerabilities in Marginals-based Synthetic Data</h3>
-            <p>
-              S. Golob, S. Pentyala, A. Maratkhan, M. De Cock. Privacy Vulnerabilities in Marginals-based Synthetic Data. Proceedings of the Secure and Trustworthy Machine Learning conference (SaTML) 2025.
-              <a href="https://arxiv.org/abs/2410.05506">Found here</a>
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>Examining Health Equity Bias in Synthetic Data Generation Techniques</h3>
-            <p>
-              S. Golob.
-              Extended Abstract and Poster presentation for the AIM-AHEAD All of Us Training Program and AIHES Annual meeting in Atlanta, GA, 2024.
-            </p>
-          </div>
-          
-          <div class="work__text">
-            <h3>High Epsilon Synthetic Data Vulnerabilities in MST and PrivBayes</h3>
-            <p>
-              S. Golob, S. Pentyala, A. Maratkhan, M. De Cock. High Epsilon Synthetic Data Vulnerabilities in MST and PrivBayes. In: AAAI-24 Workshop on Privacy-Preserving Artificial Intelligence, 2024.
-              <a href="https://arxiv.org/abs/2402.06699">Found here</a>
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>Privacy-Preserving Feature Extraction for Federated Anomaly Detection</h3>
-            <p>
-              J. Vos, S. Pentyala, S. Golob, R. Maia, C. Martins, M. De Cock, A. Nascimento. Privacy-Preserving Feature Extraction for Federated Anomaly Detection. In: Proceedings on Privacy Enhancing Technologies (PoPETS), 2024. 
-              <a href="https://petsymposium.org/popets/2024/popets-2024-0074.pdf">Found here</a>
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>A Decentralized Information Marketplace Preserving Input and Output Privacy</h3>
-            <p>
-              S. Golob, S. Pentyala, R. Dowsley, B. David, M. Larangeira, M. De Cock, A. Nascimento. A Decentralized Information Marketplace Preserving Input and Output Privacy. In: Proceedings of the 2nd SIGMOD Data Economy Workshop, 2023.
-              <a href="https://dl.acm.org/doi/10.1145/3600046.3600047">Found here</a>
-            </p>
-          </div>
-
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="#home">Steven Golob</a>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#research" class="nav-link">Research</a>
+                <a href="#competitions" class="nav-link">Competitions</a>
+                <a href="#service" class="nav-link">Service</a>
+                <a href="#awards" class="nav-link">Awards</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
-      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title" id="hero-name">Steven Golob</h1>
+                <p class="hero-subtitle" id="hero-title"></p>
+                <div class="hero-buttons">
+                    <a href="#contact" class="btn btn-primary">Contact</a>
+                    <a href="#research" class="btn btn-secondary">Research</a>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <!-- ***** Competitions ***** -->
-
-    <section class="competitions" id="competitions">
-      <div class="row">
-        <h2>Competitions</h2>
-        <div class="work__boxes">
-
-          <div class="work__text">
-            <h3>2025 MIDST Competition</h3>
-            <p>
-              The "Membership Inference over Diffusion-models-based Synthetic Tabular data" challenge, hosted at the 3rd IEEE Conference on Secure and Trustworthy Machine Learning (SaTML 2025) 
-              <a href="https://vectorinstitute.github.io/MIDST/#getting-started">Found here</a>
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>2023 SNAKE Challenge</h3>
-            <p>
-              (SaNitization Algorithm under attacK ...ε)
-              <a href="https://www.codabench.org/competitions/879/">Found here</a>
-              <br>
-              First Place!
-              <a href="https://snake-challenge.github.io/leaderboard.html">Final Leaderboard</a>
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>2023 iDASH Secure Genome Analysis Competition</h3>
-            <p>
-              Track 1: Secure relative detection in forensic databases using homomorphic encryption.
-              <a href="http://www.humangenomeprivacy.org/2023/competition-tasks.html">Found here</a>
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>U.S. PETs (Privacy Enhancing Technologies) Prize </h3>
-            <p>
-              Hosted by the White House. Won 2nd Place. March 2023.
-              <a href="https://www.drivendata.org/competitions/group/nist-federated-learning/">Found here</a>
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>AdKDD Competition</h3>
-            <p>
-              Relational data click-through predictions. 2021. 
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>UW Computational Worlds Best Video Game</h3>
-            <p>
-            Won 3rd Place with side-scrolling video game "Zerlin." 2019.
-              <!-- <a href="https://www.codabench.org/competitions/879/">found here</a> -->
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>ACM International Collegiate Programming Competition</h3>
-            <p>
-            Site Winner, division 2. 2018.
-              <!-- <a href="https://www.codabench.org/competitions/879/">found here</a> -->
-            </p>
-          </div>
+    <!-- Research Section -->
+    <section id="research" class="section">
+        <div class="container">
+            <h2 class="section-title">Publications</h2>
+            <div class="section-subtitle">Recent work in privacy-preserving machine learning and synthetic data</div>
+            <div id="research-grid" class="research-list">
+                <!-- Research items will be populated by JavaScript -->
+            </div>
         </div>
-      </div>
     </section>
 
-    <!-- ***** Projects ***** -->
-
-    <!-- <section class="projects" id="projects">
-      <div class="row">
-        <h2>Projects</h2>
-      </div>
-    </section> -->
-
-    <!-- ***** Service ***** -->
-
-    <section class="service" id="service">
-      <div class="row">
-        <h2>Service</h2>
-        <div class="work__boxes">
-
-          <div class="work__text">
-            <h3>Journal of Emerging Investigators</h3>
-            <p>
-              Volunteer Reviewer. July 2023 - present.
-              <a href="https://emerginginvestigators.org/">Found here</a>
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>UW Tacoma Computer Science Faculty Council</h3>
-            <p>
-              Graduate Student Representative. September 2022 - June 2023.
-              <!-- <a href="https://emerginginvestigators.org/">Found here</a> -->
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>UW Tacoma Computer Science Faculty Council</h3>
-            <p>
-              Student Representative. September 2018 - June 2019.
-              <!-- <a href="https://emerginginvestigators.org/">Found here</a> -->
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>Mathematics Tutor</h3>
-            <p>
-              Oakland High School in Tacoma, WA. Communities in Schools program, 2018.
-            </p>
-          </div>
-
+    <!-- Competitions Section -->
+    <section id="competitions" class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Competitions</h2>
+            <div class="section-subtitle">Research challenges and academic competitions</div>
+            <div id="competitions-grid" class="competitions-list">
+                <!-- Competition items will be populated by JavaScript -->
+            </div>
         </div>
-      </div>
     </section>
 
-
-    <!-- ***** Awards ***** -->
-
-    <section class="awards" id="awards">
-      <div class="row">
-        <h2>Awards</h2>
-        <div class="work__boxes">
-
-          <div class="work__text">
-            <h3>Proquest Distinguished Thesis Award</h3>
-            <p>
-              Western Association of Graduate Schools (WAGS), 2024
-              <a href="https://grad.uw.edu/current-students/enrollment-through-graduation/thesis-dissertation/two-uw-graduate-students-receive-wags-and-proquest-thesis-awards/">Found here</a> and <a href="https://www.tacoma.uw.edu/news/golob-wins-awards-thesis-data-privacy#:~:text=Steven%20Golob%2C%20a%20Ph.,private%20data%20to%20train%20A.I.">here</a>
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>Distinguished Thesis Award in Mathematics, Physical Sciences and Engineering</h3>
-            <p>
-              University of Washington, 2024
-              <a href="https://grad.uw.edu/current-students/enrollment-through-graduation/thesis-dissertation/dissertation-and-thesis-awards/">Found here</a>
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>AIM-AHEAD All of Us Training Program</h3>
-            <p>
-              Part of the National Institute of Health (NIH), 2024.
-              <a href="https://www.aim-ahead.net/data-science-training-core/aim-ahead-all-of-us-training-program/">Found here</a>
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>Best Poster Award</h3>
-            <p>
-              Research Symposium
-              School of Engineering and Technology, UW Tacoma, 2024.
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>PPAI Travel Award</h3>
-            <p>
-              Financial award to travel to attend the AAAI Privacy-Preserving Artificial Intelligence Workshop, 2024.
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>Carwein-Andrews Distinguished Fellowship</h3>
-            <p>
-              School of Engineering and Technology, UW Tacoma. 2023-2024.
-              <a href="https://www.tacoma.uw.edu/news/phd-tacoma">Here's</a> a good article written about this.
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>CSGrad4US Fellowship</h3>
-            <p>
-              First Cohort (2021).
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>Graduate Merit Scholarship</h3>
-            <p>
-              School of Engineering and Technology, UW Tacoma. 2023-2024.
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>Outstanding Graduate Research Award</h3>
-            <p>
-              School of Engineering and Technology, UW Tacoma. 2022-2023.
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>Andrew and Julie Fry Innovation Award</h3>
-            <p>
-              School of Engineering and Technology, UW Tacoma. 2022-2023.
-            </p>
-          </div>
-
-          <div class="work__text">
-            <h3>2nd prize for the U.S. PETs Prize Challenge</h3>
-            <p>
-              March 2023.
-            <!-- </p> -->
-          </div>
-
+    <!-- Service Section -->
+    <section id="service" class="section">
+        <div class="container">
+            <h2 class="section-title">Service</h2>
+            <div class="section-subtitle">Academic and community service</div>
+            <div id="service-grid" class="service-list">
+                <!-- Service items will be populated by JavaScript -->
+            </div>
         </div>
-      </div>
     </section>
 
-    <!-- ***** About ***** -->
-
-    <section class="about" id="about">
-      <div class="row">
-        <h2>About Me</h2>
-        <div class="about__content">
-          <div class="about__text">
-            <!-- Replace the below paragraph with info about yourself -->
-            <p>
-Steven is a lifelong student of mathematics and computer science. Having spent time at the Boeing Company as a software engineer, working on the flight simulator, he is now in the PhD program at the University of Washington Tacoma, studying with Martine De Cock. There, he was the lead of a team that won 1st place in the SNAKE challenge on privacy attacks against synthetic data. He is also the recipient of the SET Outstanding Graduate Research Award (2023) and the Andrew and Julie Fry Innovation Award (2023) for his contributions to the solution with which his research team won 2nd place in the NSF-hosted U.S.-U.K. PETs Prize Challenge 2023. His research interest is in privacy-preserving machine learning (PPML) and fair AI, critical fields that address the widespread concerns of handling personal data securely and equitably. Steven sees research in PPML as a way to contribute meaningfully toward technologies that have huge impacts in people's life. At the same time, working in academia will allow him to fuel his passion for helping and mentoring his fellow computer science students. 
-            </p>
-
-            <!-- TODO: -->
-            <!-- Provide a link to your resume -->
-            <!-- <a href="#" class="btn">My Resume</a> -->
-
-          </div>
-
-          <div class="about__photo-container">
-            <!-- Add a nice photo of yourself -->
-            <img class="about__photo" src="./images/golob_profile_photo.jpg" alt="" />
-          </div>
+    <!-- Awards Section -->
+    <section id="awards" class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Awards</h2>
+            <div class="section-subtitle">Recognition and honors</div>
+            <div id="awards-grid" class="awards-list">
+                <!-- Awards will be populated by JavaScript -->
+            </div>
         </div>
-      </div>
     </section>
-  </main>
 
-  <!-- ***** Contact ***** -->
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2 class="section-title">About Me</h2>
+                    <p id="bio-text" class="bio-text">
+                        <!-- Bio will be populated by JavaScript -->
+                    </p>
+                </div>
+                <div class="about-image">
+                    <div class="image-container">
+                        <img src="./images/golob_profile_photo.jpg" alt="Steven Golob" class="profile-image">
+                        <div class="image-overlay"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <section class="contact" id="contact">
-    <div class="row">
-      <h2>Get in Touch</h2>
-      <div class="contact__info">
-        <!--p> 
-          {about me}
-        </p> -->
-        <a href="mailto:golobs@uw.edu" class="btn">golobs@uw.edu</a>
-      </div>
-    </div>
-    <div class="row">
-      <ul class="footer__social-links">
-        <li class="footer__social-link-item">
-          <a href="https://github.com/steveng9" title="Link to Github Profile">
-            <img src="./images/github.svg" class="footer__social-image" alt="Github">
-          </a>
-        </li>
-        <li class="footer__social-link-item">
-          <a href="https://www.linkedin.com/in/steven-golob/">
-            <img src="./images/linkedin.svg" title="Link to Linkedin Profile" class="footer__social-image" alt="Linkedin">
-          </a>
-        </li>
-      </ul>
+    <!-- Contact Section -->
+    <section id="contact" class="section contact-section">
+        <div class="container">
+            <h2 class="section-title">Contact</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:golobs@uw.edu" id="email-link">golobs@uw.edu</a>
+                    </div>
+                    <div class="social-links">
+                        <a href="#" id="github-link" target="_blank" rel="noopener">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" id="linkedin-link" target="_blank" rel="noopener">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-      <ul class="footer">
-        &copy; 2023 - Developed by Steven Golob.
-      </ul>
-      <!-- <div class="footer__github-buttons">
-        <iframe
-          src="https://ghbtns.com/github-btn.html?user=nisarhassan12&repo=portfolio-template&type=watch&count=true"
-          frameborder="0" scrolling="0" width="170" height="20" title="Watch Portfolio Template on GitHub">
-        </iframe>
-      </div> -->
-    </div>
-  </footer>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Steven Golob. All rights reserved.</p>
+        </div>
+    </footer>
 
-  <a href="#top" class="back-to-top" title="Back to Top">
-    <img src="./images/arrow-up.svg" alt="Back to Top" class="back-to-top__image"/>
-  </a>
-  <script src="./index.js"></script>
+    <!-- Back to top button -->
+    <button id="back-to-top" class="back-to-top" title="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="script.js"></script>
 </body>
-
 </html>
