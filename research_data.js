@@ -139,9 +139,15 @@ let websiteData = {
   ],
   "service": [
     {
+      "title": "UW School of Engineering and Technology Research Symposium",
+      "role": "Poster Judge",
+      "period": "May 2025",
+      "url": "https://www.tacoma.uw.edu/set/events/research_showcase"
+    },
+    {
       "title": "Journal of Emerging Investigators",
       "role": "Volunteer Reviewer",
-      "period": "July 2023 - present",
+      "period": "July 2023 - January 2025",
       "url": "https://emerginginvestigators.org/"
     },
     {
