@@ -16,6 +16,34 @@ let websiteData = {
   },
   "research": [
     {
+      "title": "Winning the NIST CRC: Reconstruction Attacks on Tabular De-identified Data",
+      "authors": "S. Golob, S. Pentyala, M. De Cock",
+      "venue": "Under Review",
+      "year": "2026",
+      "url": null
+    },
+    {
+      "title": "Privacy Vulnerabilities in Synthetic Single-Cell RNA-Sequence Data",
+      "authors": "S. Golob, P. McKeever, S. Pentyala, M. De Cock, J. Peck",
+      "venue": "Under Review",
+      "year": "2026",
+      "url": "https://www.biorxiv.org/content/10.64898/2026.01.22.701160v1"
+    },
+    {
+      "title": "Does Synthetic Bulk RNA-seq Data Protect Donors? Privacy Auditing through Membership Inference Attacks",
+      "authors": "C. Jarrell, D. Filienko, J. Kim, E. Szebenyi, S. Pentyala, S. Golob, M. De Cock",
+      "venue": "5-page Extended Abstract, Under Review",
+      "year": "2026",
+      "url": "CAMDA_Extended_Abstract_2026__Red_Team_Bulk.pdf"
+    },
+    {
+      "title": "Privacy Auditing of Synthetic Single-Cell RNA-seq Data",
+      "authors": "S. Golob, P. McKeever, S. Pentyala, M. De Cock, J. Peck",
+      "venue": "5-page Extended Abstract, Under Review",
+      "year": "2026",
+      "url": "_CAMDA_26__scMAMA_MIA_singlecell_track2.pdf"
+    },
+    {
       "title": "Synthetic Data Generation for bulk RNA-seq Data: a CAMDA Health Challenge Analysis",
       "authors": "S. Menzies, S. Pentyala, D. Filienko, S. Golob, J. Banerjee, L. Foschini, M. De Cock",
       "venue": "33rd Conference on Intelligent Systems for Molecular Biology & 24th European Conference on Computational Biology (ISMB/ECCB)",
@@ -139,6 +167,12 @@ let websiteData = {
   ],
   "service": [
     {
+      "title": "Puget Sound Programming Competition (PSPC)",
+      "role": "Faculty Judge",
+      "period": "2026",
+      "url": null
+    },
+    {
       "title": "UW School of Engineering and Technology Research Symposium",
       "role": "Poster Judge",
       "period": "May 2025",
@@ -170,6 +204,12 @@ let websiteData = {
     }
   ],
   "awards": [
+    {
+      "title": "Outstanding Graduate Research Award",
+      "organization": "School of Engineering and Technology, UW Tacoma",
+      "year": "2025-2026",
+      "url": null
+    },
     {
       "title": "Outstanding Graduate Research Award",
       "organization": "School of Engineering and Technology, UW Tacoma",
