@@ -44,6 +44,13 @@ let websiteData = {
       "url": "_CAMDA_26__scMAMA_MIA_singlecell_track2.pdf"
     },
     {
+      "title": "Towards useful and private synthetic omics: community benchmarking of generative models for transcriptomics data",
+      "authors": "H. Öztürk, T. Afonja, J. Jälkö, R. Binkyte, P. Rodriguez-Mier, S. Lobentanzer, A. Wicks, J. Kreuer, S. Ouaari, N. Pfeifer, S. Menzies, S. Pentyala, D. Filienko, S. Golob, et al.",
+      "venue": "bioRxiv",
+      "year": "2026",
+      "url": null
+    },
+    {
       "title": "Synthetic Data Generation for bulk RNA-seq Data: a CAMDA Health Challenge Analysis",
       "authors": "S. Menzies, S. Pentyala, D. Filienko, S. Golob, J. Banerjee, L. Foschini, M. De Cock",
       "venue": "33rd Conference on Intelligent Systems for Molecular Biology & 24th European Conference on Computational Biology (ISMB/ECCB)",
