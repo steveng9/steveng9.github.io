@@ -41,7 +41,7 @@ let websiteData = {
       "authors": "S. Golob, P. McKeever, S. Pentyala, M. De Cock, J. Peck",
       "venue": "5-page Extended Abstract, Under Review",
       "year": "2026",
-      "url": "_CAMDA_26__scMAMA_MIA_singlecell_track2.pdf"
+      "url": "CAMDA_26__scMAMA_MIA_singlecell_track2.pdf"
     },
     {
       "title": "Towards useful and private synthetic omics: community benchmarking of generative models for transcriptomics data",
