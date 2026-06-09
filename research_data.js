@@ -23,7 +23,7 @@ let websiteData = {
       "url": "https://arxiv.org/abs/2606.08372"
     },
     {
-      "title": "Membership inference on synthetic single-cell genomic data",
+      "title": "Membership Inference on Synthetic Single-Cell Genomic Data",
       "authors": "S. Golob, P. McKeever, S. Pentyala, M. De Cock, J. Peck",
       "venue": "Under Review",
       "year": "2026",
