@@ -32,14 +32,14 @@ let websiteData = {
     {
       "title": "Does Synthetic Bulk RNA-seq Data Protect Donors? Privacy Auditing through Membership Inference Attacks",
       "authors": "C. Jarrell, D. Filienko, J. Kim, E. Szebenyi, S. Pentyala, S. Golob, M. De Cock",
-      "venue": "5-page Extended Abstract, Under Review",
+      "venue": "5-page Extended Abstract, 34th Conference on Intelligent Systems for Molecular Biology & 25th European Conference on Computational Biology (ISMB/ECCB)",
       "year": "2026",
       "url": "CAMDA_Extended_Abstract_2026__Red_Team_Bulk.pdf"
     },
     {
       "title": "Privacy Auditing of Synthetic Single-Cell RNA-seq Data",
       "authors": "S. Golob, P. McKeever, S. Pentyala, M. De Cock, J. Peck",
-      "venue": "5-page Extended Abstract, Under Review",
+      "venue": "5-page Extended Abstract, 34th Conference on Intelligent Systems for Molecular Biology & 25th European Conference on Computational Biology (ISMB/ECCB)",
       "year": "2026",
       "url": "CAMDA_26__scMAMA_MIA_singlecell_track2.pdf"
     },
