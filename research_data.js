@@ -16,18 +16,18 @@ let websiteData = {
   },
   "research": [
     {
-      "title": "Winning the NIST CRC: Reconstruction Attacks on Tabular De-identified Data",
+      "title": "SoK: Reconstruction Attacks on Synthetic Tabular Data (Insights from Winning the NIST CRC)",
       "authors": "S. Golob, S. Pentyala, M. De Cock",
       "venue": "Under Review",
       "year": "2026",
-      "url": null
+      "url": "https://arxiv.org/abs/2606.08372"
     },
     {
-      "title": "Privacy Vulnerabilities in Synthetic Single-Cell RNA-Sequence Data",
+      "title": "Membership inference on synthetic single-cell genomic data",
       "authors": "S. Golob, P. McKeever, S. Pentyala, M. De Cock, J. Peck",
       "venue": "Under Review",
       "year": "2026",
-      "url": "https://www.biorxiv.org/content/10.64898/2026.01.22.701160v1"
+      "url": "https://www.biorxiv.org/content/10.64898/2026.01.22.701160v2"
     },
     {
       "title": "Does Synthetic Bulk RNA-seq Data Protect Donors? Privacy Auditing through Membership Inference Attacks",
