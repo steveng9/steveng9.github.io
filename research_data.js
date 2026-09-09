@@ -34,14 +34,14 @@ let websiteData = {
       "authors": "C. Jarrell, D. Filienko, J. Kim, E. Szebenyi, S. Pentyala, S. Golob, M. De Cock",
       "venue": "5-page Extended Abstract, 34th Conference on Intelligent Systems for Molecular Biology & 25th European Conference on Computational Biology (ISMB/ECCB)",
       "year": "2026",
-      "url": "CAMDA_Extended_Abstract_2026__Red_Team_Bulk.pdf"
+      "url": "pdfs/CAMDA_Extended_Abstract_2026__Red_Team_Bulk.pdf"
     },
     {
       "title": "Privacy Auditing of Synthetic Single-Cell RNA-seq Data",
       "authors": "S. Golob, P. McKeever, S. Pentyala, M. De Cock, J. Peck",
       "venue": "5-page Extended Abstract, 34th Conference on Intelligent Systems for Molecular Biology & 25th European Conference on Computational Biology (ISMB/ECCB)",
       "year": "2026",
-      "url": "CAMDA_26__scMAMA_MIA_singlecell_track2.pdf"
+      "url": "pdfs/CAMDA_26__scMAMA_MIA_singlecell_track2.pdf"
     },
     {
       "title": "Towards useful and private synthetic omics: community benchmarking of generative models for transcriptomics data",
@@ -49,6 +49,13 @@ let websiteData = {
       "venue": "bioRxiv",
       "year": "2026",
       "url": null
+    },
+    {
+      "title": "Portable Causal Fairness Across Synthetic Data Generator Families",
+      "authors": "Steven Golob, Sikha Pentyala, Martine De Cock",
+      "venue": "Under Review",
+      "year": "2026",
+      "url": "https://arxiv.org/abs/2609.03180"
     },
     {
       "title": "Synthetic Data Generation for bulk RNA-seq Data: a CAMDA Health Challenge Analysis",
@@ -80,10 +87,10 @@ let websiteData = {
     },
     {
       "title": "Examining Health Equity Bias in Synthetic Data Generation Techniques",
-      "authors": "S. Golob",
+      "authors": "Steven Golob",
       "venue": "Extended Abstract and Poster presentation for the AIM-AHEAD All of Us Training Program and AIHES Annual meeting in Atlanta, GA",
       "year": "2024",
-      "url": null
+      "url": "pdfs/AIM_AHEAD_AllOfUs_Abstract_2024.pdf"
     },
     {
       "title": "High Epsilon Synthetic Data Vulnerabilities in MST and PrivBayes",
@@ -91,6 +98,13 @@ let websiteData = {
       "venue": "AAAI-24 Workshop on Privacy-Preserving Artificial Intelligence",
       "year": "2024",
       "url": "https://arxiv.org/abs/2402.06699"
+    },
+    {
+      "title": "LambdaMap: Serverless Dynamism on Big Data Processing",
+      "authors": "Steven Golob, Austin Bomhold, Simarpal Singh",
+      "venue": "TCSS 562 Cloud Computing Course Project",
+      "year": "2024",
+      "url": "pdfs/LambdaMap_TCSS562_2024.pdf"
     },
     {
       "title": "Privacy-Preserving Feature Extraction for Federated Anomaly Detection",
