@@ -568,6 +568,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .bio-text {
+    white-space: pre-line;
     font-size: 1.1rem;
     line-height: 1.8;
     color: var(--text-light);
