@@ -1,160 +1,2143 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" type="image/png" href="./images/fav2.png">
-    <script src="research_data.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Steven Golob</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Steven Golob, PhD candidate in computer science at the University of Washington Tacoma. Privacy attacks on synthetic data: membership inference, reconstruction, and who is exposed first.">
+<meta name="author" content="Steven Golob">
+<meta property="og:title" content="Steven Golob">
+<meta property="og:description" content="Privacy attacks on synthetic data. PhD candidate, University of Washington Tacoma. On the faculty job market, 2026–27.">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://steveng9.github.io/">
+<meta property="og:image" content="https://steveng9.github.io/images/golob_profile_photo.jpg">
+<link rel="icon" type="image/png" href="images/fav2.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=Crimson+Pro:ital,wght@0,300..800;1,300..800&family=Inconsolata:wght@400..700&display=swap">
+<script>document.documentElement.classList.add("js");</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Steven Golob","jobTitle":"PhD Candidate, Computer Science","affiliation":{"@type":"CollegeOrUniversity","name":"University of Washington Tacoma"},"email":"mailto:golobs@uw.edu","url":"https://steveng9.github.io/","sameAs":["https://scholar.google.com/citations?user=gcPNbDsAAAAJ","https://github.com/steveng9","https://www.linkedin.com/in/steven-golob/"]}
+</script>
+<style>
+/* Layout: a field notebook for a privacy auditor. Left-aligned reading column,
+   one sticky tab bar, and one interactive figure (Fig. 1) as the page's single bold moment.
+   Palette is Steven's: periwinkle and indigo-violet with a dusk-yellow highlighter.
+   Type matches the CV: Crimson Pro (for Cochineal), Cabin, Inconsolata. */
+:root {
+  --bg: #f6f6fc;
+  --surface: #ffffff;
+  --surface-2: #eeeefa;
+  --ink: #1c1a36;
+  --ink-2: #47446a;
+  --muted: #6e6b93;
+  --line: #e0dff1;
+  --peri: #ccccff;
+  --indigo: #4c58c9;
+  --violet: #764ba2;
+  --dusk: #f7e98e;
+  --on-dusk: #1c1a36;
+  --hl: #f7e98e;
+  --mark-ink: inherit;
+  --grad: linear-gradient(120deg, #667eea 0%, #764ba2 100%);
+  --dot: #8f95e8;
+  --shadow: 0 1px 2px rgb(28 26 54 / .05), 0 8px 24px -12px rgb(28 26 54 / .18);
 
-    <title>Steven Golob | Computer Scientist, Tacoma</title>
-    <meta name="description" content="Steven Golob - PhD Computer Science student at UW Tacoma specializing in privacy-preserving machine learning and fair AI">
-    <meta name="keywords" content="Steven Golob, Computer Science, Privacy-Preserving Machine Learning, PPML, Fair AI, UW Tacoma">
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <link rel="stylesheet" href="styles.css">
+  --f-display: "Crimson Pro", "Cochineal", Georgia, "Times New Roman", serif;
+  --f-body: "Cabin", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "Inconsolata", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --step--1: .875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: 1.6rem;
+  --step-3: clamp(1.9rem, 1.4rem + 1.8vw, 2.6rem);
+  --step-4: clamp(2.8rem, 1.8rem + 4.2vw, 5rem);
+  --measure: 66ch;
+  --radius: 14px;
+  --nav-h: 60px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #100f26; --surface: #18173a; --surface-2: #201f48; --ink: #ecebfb; --ink-2: #c4c2e6;
+    --muted: #9592bf; --line: #2d2b58; --peri: #34347a; --indigo: #a4adff; --violet: #c6a0ee;
+    --dusk: #f4e49c; --on-dusk: #1c1a36; --hl: rgb(244 228 156 / .16); --mark-ink: #f4e49c; --dot: #6f76d6;
+    --shadow: 0 1px 2px rgb(0 0 0 / .3), 0 10px 30px -14px rgb(0 0 0 / .6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #100f26; --surface: #18173a; --surface-2: #201f48; --ink: #ecebfb; --ink-2: #c4c2e6;
+  --muted: #9592bf; --line: #2d2b58; --peri: #34347a; --indigo: #a4adff; --violet: #c6a0ee;
+  --dusk: #f4e49c; --on-dusk: #1c1a36; --hl: rgb(244 228 156 / .16); --mark-ink: #f4e49c; --dot: #6f76d6;
+  --shadow: 0 1px 2px rgb(0 0 0 / .3), 0 10px 30px -14px rgb(0 0 0 / .6);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { interpolate-size: allow-keywords; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 400 var(--step-0)/1.65 var(--f-body);
+  text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--bg); }
+img { max-width: 100%; display: block; }
+a { color: var(--indigo); text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in oklab, var(--indigo) 40%, transparent); transition: color .2s, text-decoration-color .2s; }
+a:hover { text-decoration-color: currentColor; }
+:focus-visible { outline: 2px solid var(--indigo); outline-offset: 3px; border-radius: 6px; }
+::selection { background: var(--dusk); color: var(--on-dusk); }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; line-height: 1.1; text-wrap: balance; margin: 0; letter-spacing: -.01em; }
+p { margin: 0; text-wrap: pretty; }
+.wrap { max-width: 1120px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.eyebrow { font: 600 .78rem/1.2 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.mono { font-family: var(--f-mono); }
+.prose { max-width: var(--measure); display: grid; gap: 1.05em; color: var(--ink-2); }
+.prose strong { color: var(--ink); font-weight: 600; }
+mark {
+  color: var(--mark-ink); background: linear-gradient(transparent 52%, var(--hl) 52%, var(--hl) 92%, transparent 92%) no-repeat 0 0 / 100% 100%;
+  padding: 0 .1em; border-radius: 2px;
+}
+
+/* ---------------------------------------------------------------- nav */
+.nav {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50;
+  background: color-mix(in oklab, var(--bg) 78%, transparent);
+  backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  border-bottom: 1px solid color-mix(in oklab, var(--line) 70%, transparent);
+}
+.nav .wrap { display: flex; align-items: center; gap: 16px; min-height: var(--nav-h); }
+.brand { display: flex; align-items: center; gap: 10px; font: 600 1.25rem/1 var(--f-display); color: var(--ink); text-decoration: none; white-space: nowrap; }
+.brand-mark { width: 26px; height: 26px; border-radius: 8px; background: var(--grad); display: grid; place-items: center; color: #fff; font: 700 .8rem/1 var(--f-mono); letter-spacing: -.04em; }
+.tabs { position: relative; display: flex; gap: 2px; margin-left: auto; padding: 4px; border-radius: 999px; background: var(--surface-2); overflow-x: auto; scrollbar-width: none; min-width: 0; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { position: relative; z-index: 1; padding: 7px 14px; border-radius: 999px; font: 600 .9rem/1 var(--f-body); color: var(--ink-2); text-decoration: none; white-space: nowrap; transition: color .25s; }
+.tab:hover { color: var(--ink); }
+.tab[aria-current="page"] { color: #fff; }
+.tab-ind { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 999px; background: var(--grad); box-shadow: 0 4px 14px -4px rgb(102 126 234 / .55); transition: transform .45s cubic-bezier(.2,.8,.2,1), width .45s cubic-bezier(.2,.8,.2,1); }
+.theme-btn { flex: none; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); display: grid; place-items: center; cursor: pointer; transition: transform .3s, border-color .2s; }
+.theme-btn:hover { border-color: var(--indigo); color: var(--ink); }
+.theme-btn:active { transform: rotate(-30deg) scale(.95); }
+.theme-btn svg { width: 18px; height: 18px; }
+@media (max-width: 720px) {
+  .nav .wrap { flex-wrap: wrap; gap: 8px; padding-block: 8px; }
+  .tabs { order: 3; width: 100%; margin-left: 0; justify-content: space-between; }
+  .tab { padding: 7px 10px; font-size: .84rem; }
+  .theme-btn { margin-left: auto; }
+}
+
+/* ---------------------------------------------------------------- views */
+main { view-transition-name: main; }
+.view { padding-block: clamp(28px, 5vw, 64px) 72px; display: grid; gap: clamp(48px, 7vw, 88px); }
+::view-transition-old(main) { animation: vt-out .18s ease-in both; }
+::view-transition-new(main) { animation: vt-in .38s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-6px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(10px); } }
+.section { display: grid; gap: 22px; }
+.section-head { display: grid; gap: 8px; }
+.section-head h2 { font-size: var(--step-3); }
+.section-head p { color: var(--muted); max-width: var(--measure); }
+.page-title { display: grid; gap: 12px; }
+.page-title h1 { font-size: var(--step-4); font-weight: 500; }
+.page-title p:not(.eyebrow) { font: 400 var(--step-1)/1.5 var(--f-display); color: var(--ink-2); max-width: 60ch; }
+
+/* Scroll motion (see motion() in the script). Three attributes switch it on:
+     data-reveal            fade and rise in the first time it is scrolled to
+     data-parallax="0.1"    move vertically at a different speed than the page
+     data-drift="-0.2"      slide sideways as the page scrolls
+   All of it is off for visitors who ask for reduced motion, and without
+   JavaScript everything is simply visible. */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] { opacity: 0; transform: translateY(20px); transition: opacity .7s cubic-bezier(.2,.8,.2,1), transform .7s cubic-bezier(.2,.8,.2,1); transition-delay: calc(var(--i, 0) * 70ms); }
+  .js [data-reveal].is-in { opacity: 1; transform: none; }
+  [data-parallax] { translate: 0 var(--move-y, 0px); will-change: translate; }
+  [data-drift] { translate: var(--move-x, 0px) 0; will-change: translate; }
+}
+main { overflow-x: clip; }
+.progress { position: fixed; inset: 0 0 auto; height: 2px; z-index: 70; background: var(--grad); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); pointer-events: none; }
+
+/* ---------------------------------------------------------------- hero */
+/* Full width, pulled up under the translucent tab bar. Photos crossfade behind the
+   name, each drifting a little while it is up. Depth: the photos sit deeper than
+   the page (they scroll slower and lean away from the pointer), the text sits in
+   front (it scrolls slightly faster). */
+.hero { position: relative; isolation: isolate; overflow: hidden; width: 100vw; margin-left: calc(50% - 50vw);
+  margin-top: calc(-1 * (clamp(28px, 5vw, 64px) + var(--nav-h)));
+  min-height: min(92svh, 860px); display: grid; align-items: end;
+  padding: calc(var(--nav-h) + 56px) 0 clamp(40px, 6vw, 76px); background: #0c0e1d; color: #fff; }
+.stage { position: absolute; inset: -2% 0 -4%; z-index: -2; }
+.stage-in { position: absolute; inset: -26px; transform: translate(calc(var(--tx, 0) * -16px), calc(var(--ty, 0) * -10px)); transition: transform 1s cubic-bezier(.2,.8,.2,1); }
+.slide { position: absolute; inset: 0; margin: 0; opacity: 0; transform: translateX(4%); transition: opacity .9s ease, transform .9s cubic-bezier(.2,.8,.2,1); }
+.slide.on { opacity: 1; transform: none; z-index: 1; }
+.slide.out { opacity: 1; transform: translateX(-2.5%); }
+.slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, 50% 35%); }
+@media (prefers-reduced-motion: no-preference) {
+  .slide.on img, .slide.out img { animation: kb 6.2s linear forwards; }
+}
+@keyframes kb {
+  from { transform: translate(var(--x0), var(--y0)) scale(var(--s0)); }
+  to   { transform: translate(var(--x1), var(--y1)) scale(var(--s1)); }
+}
+.scrim { position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(to top, rgb(10 11 28 / .95) 0%, rgb(10 11 28 / .72) 36%, rgb(10 11 28 / .34) 68%, rgb(10 11 28 / .5) 100%),
+              linear-gradient(to right, rgb(10 11 28 / .62), rgb(10 11 28 / .1) 70%); }
+.stage-cap { position: absolute; right: max(16px, calc(50vw - 560px)); bottom: clamp(18px, 2.6vw, 28px); margin: 0; z-index: 1; max-width: 34ch; text-align: right;
+  font: 600 .72rem/1.4 var(--f-mono); letter-spacing: .02em; color: rgb(255 255 255 / .72); transition: opacity .35s; }
+.stage-cap.swap { opacity: 0; }
+.hero-text { display: grid; gap: 20px; min-width: 0; max-width: 720px; }
+.hero h1 { font-size: var(--step-4); font-weight: 500; letter-spacing: -.02em; color: #fff; text-shadow: 0 2px 28px rgb(0 0 0 / .35); }
+.hero h1 span { display: inline-block; }
+.hero .eyebrow { color: rgb(255 255 255 / .78); }
+.hero .lead { font: 400 clamp(1.25rem, 1.05rem + .8vw, 1.6rem)/1.45 var(--f-display); color: rgb(255 255 255 / .93); max-width: 34ch; text-shadow: 0 1px 18px rgb(0 0 0 / .4); }
+/* The hero is always dark (photos behind a scrim), so its highlighter uses the dark-theme ink in both themes. */
+.hero .lead mark { --hl: rgb(244 228 156 / .16); --mark-ink: #f4e49c; background-size: 0% 100%; animation: swipe 1.1s .55s cubic-bezier(.65,0,.35,1) forwards; }
+@keyframes swipe { to { background-size: 100% 100%; } }
+.status { display: inline-flex; align-items: center; gap: 10px; width: fit-content; padding: 7px 14px 7px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font: 600 .85rem/1.2 var(--f-body); color: var(--ink-2); box-shadow: var(--shadow); }
+.pulse { position: relative; width: 9px; height: 9px; border-radius: 50%; background: #3fbf7f; flex: none; }
+.pulse::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: inherit; animation: ping 2.2s cubic-bezier(0,0,.2,1) infinite; }
+@keyframes ping { 75%, 100% { transform: scale(2.6); opacity: 0; } }
+.links { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none;
+  font: 600 .92rem/1 var(--f-body); cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s, background .2s;
+}
+.btn svg { width: 17px; height: 17px; flex: none; }
+.btn:hover { transform: translateY(-2px); border-color: color-mix(in oklab, var(--indigo) 55%, var(--line)); box-shadow: var(--shadow); }
+.btn.primary { background: var(--grad); color: #fff; border-color: transparent; }
+.btn.primary:hover { box-shadow: 0 10px 24px -10px rgb(118 75 162 / .7); }
+.hero .status { background: rgb(255 255 255 / .12); border-color: rgb(255 255 255 / .22); color: #fff; box-shadow: none; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.hero .btn:not(.primary) { background: rgb(255 255 255 / .1); border-color: rgb(255 255 255 / .26); color: #fff; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.hero .btn:not(.primary):hover { background: rgb(255 255 255 / .18); border-color: rgb(255 255 255 / .5); }
+@media (max-width: 760px) {
+  .hero { min-height: min(88svh, 760px); }
+  .stage-cap { display: none; }
+}
+.hero-in > * { animation: hero-in .8s cubic-bezier(.2,.8,.2,1) both; }
+.hero-in > *:nth-child(2) { animation-delay: .08s; } .hero-in > *:nth-child(3) { animation-delay: .16s; }
+.hero-in > *:nth-child(4) { animation-delay: .24s; } .hero-in > *:nth-child(5) { animation-delay: .32s; }
+@keyframes hero-in { from { opacity: .001; transform: translateY(14px); } }
+
+/* ---------------------------------------------------------------- portrait (About) */
+/* The photo sits in a clipped frame, scaled up a little, so it slides against the
+   frame as you scroll and leans away from the pointer; the coloured block behind
+   it moves the other way. */
+.side { display: grid; gap: 28px; align-content: start; }
+.portrait { position: relative; margin: 0; width: calc(100% - 14px); }
+.portrait::before { content: ""; position: absolute; inset: 14px -14px -14px 14px; border-radius: 22px; background: var(--grad); opacity: .85; translate: 0 calc(var(--move-y, 0px) * -1.6); transform: translate(calc(var(--tx, 0) * 12px), calc(var(--ty, 0) * 12px)); transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+.portrait .frame { position: relative; aspect-ratio: 4 / 5; border-radius: 22px; overflow: hidden; box-shadow: var(--shadow); background: var(--surface-2); }
+.portrait img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 26%; scale: 1.12; transform: translate(calc(var(--tx, 0) * -8px), calc(var(--ty, 0) * -8px)); transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+@media (max-width: 900px) { .side { grid-template-columns: minmax(0, 230px) minmax(0, 1fr); align-items: start; } }
+@media (max-width: 560px) { .side { grid-template-columns: 1fr; } .portrait { width: min(72%, 260px); } }
+@media (max-width: 760px) { .portrait, .portrait::before { translate: none; } }
+
+/* ---------------------------------------------------------------- two-column about */
+.about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px); gap: clamp(28px, 5vw, 64px); align-items: start; }
+@media (max-width: 900px) { .about { grid-template-columns: 1fr; } }
+.facts { display: grid; gap: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+.facts div { display: grid; grid-template-columns: 7.5em 1fr; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--line); font-size: .93rem; }
+.facts div:first-child { border-top: 0; }
+.facts dt { font: 600 .74rem/1.6 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.facts dd { margin: 0; color: var(--ink-2); min-width: 0; }
+
+/* ---------------------------------------------------------------- figure 1 */
+.fig { position: relative; border-radius: 22px; background: var(--surface); border: 1px solid var(--line); overflow: hidden; box-shadow: var(--shadow); }
+.fig canvas { display: block; width: 100%; height: clamp(260px, 34vw, 380px); cursor: crosshair; touch-action: pan-y; }
+.fig-cap { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 18px; align-items: start; padding: 18px 22px 20px; border-top: 1px solid var(--line); }
+.fig-cap .eyebrow { padding-top: 3px; }
+.fig-cap p { color: var(--ink-2); font-size: .97rem; max-width: 70ch; }
+.fig-cap a { white-space: nowrap; font-weight: 600; font-size: .95rem; }
+@media (max-width: 640px) { .fig-cap { grid-template-columns: 1fr; gap: 8px; } }
+.legend-dot { display: inline-block; width: .7em; height: .7em; border-radius: 50%; vertical-align: .02em; margin-right: .3em; }
+
+/* ---------------------------------------------------------------- photos */
+/* Rendered from the PHOTOS list; with no photos for a place, it stays hidden. */
+.shot { margin: 0; display: grid; gap: 9px; }
+.shot img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 14px; box-shadow: var(--shadow); background: var(--surface-2); transition: rotate .5s cubic-bezier(.2,.8,.2,1), scale .5s cubic-bezier(.2,.8,.2,1); }
+.shot:nth-child(odd) img { rotate: -1.2deg; }
+.shot:nth-child(even) img { rotate: 1deg; }
+.shot:hover img { rotate: 0deg; scale: 1.02; }
+.shot figcaption { font: 600 .76rem/1.45 var(--f-mono); color: var(--muted); letter-spacing: .01em; }
+.photo-trio { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 20px; align-items: start; }
+@media (max-width: 640px) { .photo-trio .shot { translate: none; } }
+
+/* ---------------------------------------------------------------- news */
+.news { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--line); }
+.news li { display: grid; grid-template-columns: 6.5em minmax(0, 1fr); gap: 18px; padding: 14px 4px; border-bottom: 1px solid var(--line); transition: background .2s; }
+.news li:hover { background: color-mix(in oklab, var(--surface-2) 60%, transparent); }
+.news time { font: 600 .85rem/1.9 var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.news p { color: var(--ink-2); }
+.news .tag { display: inline-block; margin-right: 6px; padding: 1px 8px; border-radius: 999px; font: 700 .68rem/1.6 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; background: var(--dusk); color: var(--on-dusk); vertical-align: .12em; }
+.more-btn { justify-self: start; background: none; border: 0; padding: 6px 0; font: 600 .92rem/1 var(--f-body); color: var(--indigo); cursor: pointer; }
+.more-btn:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------------------------------------------------------------- cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 16px; }
+.card {
+  --mx: 50%; --my: 0%;
+  position: relative; display: grid; gap: 10px; align-content: start; padding: 22px; border-radius: var(--radius);
+  background: radial-gradient(420px circle at var(--mx) var(--my), color-mix(in oklab, var(--peri) 40%, transparent), transparent 60%), var(--surface);
+  border: 1px solid var(--line); transition: transform .3s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .3s; min-width: 0;
+}
+.card:hover { transform: translateY(-3px); border-color: color-mix(in oklab, var(--indigo) 45%, var(--line)); box-shadow: var(--shadow); }
+.card h3 { font-size: 1.28rem; font-weight: 600; }
+.card h3 a { color: var(--ink); text-decoration: none; }
+.card h3 a:hover { color: var(--indigo); }
+.card p { color: var(--ink-2); font-size: .96rem; }
+.venue { display: inline-flex; align-items: center; gap: 8px; width: fit-content; font: 700 .75rem/1 var(--f-mono); letter-spacing: .05em; color: var(--violet); }
+.venue::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--grad); }
+.stats { display: flex; flex-wrap: wrap; gap: 8px; }
+.stat { padding: 4px 10px; border-radius: 8px; background: var(--surface-2); font: 600 .8rem/1.4 var(--f-mono); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.linkrow { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 600 .86rem/1.4 var(--f-body); }
+.linkrow a { text-decoration: none; }
+.linkrow a:hover { text-decoration: underline; }
+.linkrow a::after { content: " ↗"; font-size: .8em; opacity: .6; }
+
+/* ---------------------------------------------------------------- research */
+.thread { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); gap: clamp(20px, 4vw, 56px); padding-top: 28px; border-top: 1px solid var(--line); }
+.thread > header { display: grid; gap: 8px; align-content: start; position: sticky; top: calc(var(--nav-h) + 24px); }
+.thread > header h2 { font-size: var(--step-2); }
+.thread > header p { color: var(--muted); font-size: .92rem; }
+.thread-body { display: grid; gap: 22px; min-width: 0; }
+@media (max-width: 860px) { .thread { grid-template-columns: 1fr; } .thread > header { position: static; } }
+.paper { display: grid; gap: 10px; padding: 22px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); }
+.paper h3 { font-size: 1.35rem; }
+.paper p { color: var(--ink-2); font-size: .98rem; }
+.callout { padding: 16px 18px; border-radius: 12px; background: color-mix(in oklab, var(--dusk) 26%, var(--surface)); border: 1px solid color-mix(in oklab, var(--dusk) 70%, var(--line)); color: var(--ink-2); font-size: .95rem; }
+
+/* bar chart (TabDDPM by race) */
+.chart { display: grid; gap: 14px; padding: 22px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); }
+.chart-title { font: 600 1.05rem/1.3 var(--f-display); color: var(--ink); }
+.bars { --lab: 11.5rem; position: relative; display: grid; gap: 10px; padding-bottom: 26px; }
+.bar-row { display: grid; grid-template-columns: var(--lab) minmax(0, 1fr); gap: 14px; align-items: center; font-size: .88rem; color: var(--ink-2); }
+@media (max-width: 560px) { .bars { --lab: 8.4rem; } .bar-row { font-size: .8rem; line-height: 1.3; } }
+.bar-row .lbl small { color: var(--muted); font-family: var(--f-mono); }
+.bar-track { position: relative; height: 22px; }
+.bar { position: absolute; left: 0; top: 4px; height: 14px; border-radius: 0 4px 4px 0; background: var(--indigo); width: var(--w); transform-origin: left; transition: filter .2s; }
+.bar.em { background: var(--violet); }
+.bar-row:hover .bar { filter: brightness(1.12); }
+.bar-val { position: absolute; top: 0; left: calc(var(--w) + 5px); padding: 0 3px; background: var(--surface); border-radius: 4px; font: 700 .82rem/22px var(--f-mono); color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mean-line { position: absolute; top: -4px; bottom: 18px; left: calc(var(--lab) + 14px + (100% - var(--lab) - 14px) * var(--m)); width: 0; border-left: 1.5px dashed var(--muted); pointer-events: none; }
+.mean-tag { position: absolute; bottom: 0; left: calc(var(--lab) + 14px + (100% - var(--lab) - 14px) * var(--m)); transform: translateX(-50%); font: 600 .72rem/1 var(--f-mono); color: var(--muted); white-space: nowrap; }
+.chart-cap { font-size: .84rem; color: var(--muted); padding-top: 14px; }
+.tip { position: absolute; z-index: 5; pointer-events: none; padding: 8px 10px; border-radius: 8px; background: var(--ink); color: var(--bg); font: 500 .8rem/1.35 var(--f-body); box-shadow: var(--shadow); white-space: nowrap; transform: translate(-50%, -110%); }
+@media (prefers-reduced-motion: no-preference) {
+  .chart.in .bar { animation: grow .9s cubic-bezier(.2,.8,.2,1) both; }
+  .chart.in .bar-row:nth-child(2) .bar { animation-delay: .06s; } .chart.in .bar-row:nth-child(3) .bar { animation-delay: .12s; }
+  .chart.in .bar-row:nth-child(4) .bar { animation-delay: .18s; } .chart.in .bar-row:nth-child(5) .bar { animation-delay: .24s; }
+  @keyframes grow { from { transform: scaleX(.02); } }
+}
+
+/* timeline (competitions) */
+.timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; position: relative; }
+.timeline::before { content: ""; position: absolute; left: 5.2em; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(var(--peri), var(--line)); }
+.timeline li { display: grid; grid-template-columns: 4.4em minmax(0, 1fr); gap: 2.2em; padding: 12px 0; position: relative; }
+.timeline li::before { content: ""; position: absolute; left: calc(5.2em - 5px); top: 20px; width: 12px; height: 12px; border-radius: 50%; background: var(--surface); border: 2px solid var(--indigo); }
+.timeline li.win::before { background: var(--dusk); border-color: var(--violet); }
+.timeline time { font: 700 .9rem/1.7 var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.timeline h3 { font: 600 1.12rem/1.3 var(--f-display); }
+.timeline .result { font: 700 .8rem/1.6 var(--f-mono); color: var(--violet); letter-spacing: .02em; }
+.timeline p { color: var(--ink-2); font-size: .94rem; }
+
+/* repos */
+.repos { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 12px; }
+.repo { display: grid; gap: 6px; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); text-decoration: none; color: var(--ink-2); transition: border-color .2s, transform .2s; min-width: 0; }
+.repo:hover { border-color: var(--indigo); transform: translateY(-2px); }
+.repo b { font: 700 .9rem/1.3 var(--f-mono); color: var(--indigo); overflow-wrap: anywhere; }
+.repo span { font-size: .88rem; }
+.people { display: flex; flex-wrap: wrap; gap: 8px; }
+.person { padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: .9rem; color: var(--ink-2); text-decoration: none; }
+a.person:hover { border-color: var(--indigo); color: var(--ink); }
+.person small { color: var(--muted); }
+
+/* ---------------------------------------------------------------- publications */
+.pub-tools { position: sticky; top: calc(env(safe-area-inset-top, 0px) + var(--nav-h)); z-index: 20; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 12px 0; background: color-mix(in oklab, var(--bg) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+@media (max-width: 720px) { .pub-tools { position: static; } }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); font: 600 .85rem/1 var(--f-body); cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+.chip:hover { border-color: var(--indigo); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip .n { font-family: var(--f-mono); opacity: .65; margin-left: 4px; }
+.search { position: relative; margin-left: auto; flex: 1 1 220px; max-width: 320px; }
+.search input { width: 100%; padding: 9px 36px 9px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 500 .9rem/1.2 var(--f-body); }
+.search input:focus { outline: none; border-color: var(--indigo); box-shadow: 0 0 0 3px color-mix(in oklab, var(--indigo) 22%, transparent); }
+.search kbd { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font: 600 .72rem/1 var(--f-mono); color: var(--muted); border: 1px solid var(--line); border-radius: 5px; padding: 3px 6px; }
+.count { font: 600 .82rem/1 var(--f-mono); color: var(--muted); }
+.year-group { display: grid; grid-template-columns: 5rem minmax(0, 1fr); gap: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+.year-group > h2 { font: 600 1.6rem/1 var(--f-display); color: var(--muted); padding-top: 4px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + var(--pub-tools-h, 64px) + 12px); align-self: start; }
+@media (max-width: 720px) { .year-group > h2 { top: calc(env(safe-area-inset-top, 0px) + var(--nav-h) + 12px); } }
+@media (max-width: 640px) { .year-group { grid-template-columns: 1fr; gap: 8px; } .year-group > h2 { position: static; } }
+.pubs { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+.pub { display: grid; gap: 6px; min-width: 0; }
+.pub-title { font: 600 1.2rem/1.3 var(--f-display); color: var(--ink); }
+.pub-title a { color: inherit; text-decoration: none; background: linear-gradient(var(--indigo), var(--indigo)) no-repeat 0 100% / 0 1px; transition: background-size .35s, color .2s; }
+.pub-title a:hover { color: var(--indigo); background-size: 100% 1px; }
+.pub-authors { font-size: .93rem; color: var(--ink-2); }
+.pub-authors b { color: var(--ink); font-weight: 700; }
+.pub-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: .9rem; color: var(--muted); }
+.pub-meta em { color: var(--ink-2); }
+.kind { padding: 2px 8px; border-radius: 6px; font: 700 .68rem/1.5 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; background: var(--surface-2); color: var(--ink-2); }
+.kind.journal { background: color-mix(in oklab, var(--violet) 18%, var(--surface)); }
+.kind.conference { background: color-mix(in oklab, var(--indigo) 18%, var(--surface)); }
+.kind.first { background: var(--dusk); color: var(--on-dusk); }
+.pub-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 7px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); font: 600 .78rem/1.3 var(--f-mono); text-decoration: none; cursor: pointer; transition: border-color .2s, color .2s, background .2s; }
+.pill:hover { border-color: var(--indigo); color: var(--indigo); }
+.pill[aria-expanded="true"] { background: var(--surface-2); color: var(--ink); }
+.abs-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s cubic-bezier(.2,.8,.2,1); }
+.abs-wrap > div { overflow: hidden; min-height: 0; }
+.abs-wrap.open { grid-template-rows: 1fr; }
+.abs-text { margin-top: 10px; padding: 14px 16px; border-left: 3px solid var(--peri); background: color-mix(in oklab, var(--surface-2) 55%, transparent); border-radius: 0 10px 10px 0; color: var(--ink-2); font-size: .94rem; max-width: 80ch; }
+.pub-foot { color: var(--muted); font-size: .86rem; }
+.empty { color: var(--muted); padding: 30px 0; }
+
+/* ---------------------------------------------------------------- lists (teaching, cv) */
+.entries { list-style: none; margin: 0; padding: 0; display: grid; }
+.entries li { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 18px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.entries li:first-child { border-top: 1px solid var(--line); }
+.entries .when { font: 600 .86rem/1.7 var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.entries .what { display: grid; gap: 3px; min-width: 0; }
+.entries .what b { font-weight: 600; color: var(--ink); }
+.entries .what span { color: var(--ink-2); font-size: .94rem; }
+@media (max-width: 560px) { .entries li { grid-template-columns: 1fr; gap: 2px; } }
+/* each heading + its content is one .cv-row, so a sticky heading is pushed off by the next row's instead of stacking */
+.cv-grid { display: grid; gap: 28px; }
+.cv-row { display: grid; grid-template-columns: minmax(0, 13rem) minmax(0, 1fr); gap: 0 clamp(20px, 4vw, 56px); }
+.cv-row > h2 { font-size: var(--step-2); position: sticky; top: calc(var(--nav-h) + 24px); align-self: start; }
+@media (max-width: 860px) { .cv-grid { gap: 14px; } .cv-row { grid-template-columns: 1fr; gap: 14px; } .cv-row > h2 { position: static; margin-top: 18px; } }
+.cv-top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 18px; }
+.split { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+
+/* ---------------------------------------------------------------- toys */
+/* One small looping animation per research thread, in the thread's sticky header.
+   Each toy keeps its own two colors (set in TOYS in the script). Click to open it
+   large, with controls, in the toy dialog. */
+.toy { position: relative; display: block; width: 100%; max-width: 340px; padding: 0; margin-top: 10px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; cursor: zoom-in; color: inherit; font: inherit; text-align: left;
+  background: radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--muted) 26%, transparent) 1px, transparent 1.3px) 0 0 / 14px 14px, var(--surface);
+  box-shadow: 0 1px 0 rgb(255 255 255 / .04) inset; transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s, border-color .35s; }
+.toy:hover { transform: translateY(-3px) rotate(-.4deg); border-color: color-mix(in oklab, var(--toy-a, var(--indigo)) 55%, var(--line)); box-shadow: 0 14px 30px -18px var(--toy-a, var(--indigo)); }
+.toy canvas { display: block; width: 100%; aspect-ratio: 4 / 3; }
+.toy-tag { position: absolute; left: 10px; top: 9px; display: inline-flex; align-items: center; gap: 6px; font: 700 .66rem/1 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); pointer-events: none; }
+.toy-tag i { width: 7px; height: 7px; border-radius: 50%; background: var(--toy-a); box-shadow: 9px 0 0 var(--toy-b); margin-right: 9px; }
+.toy-open { position: absolute; right: 9px; top: 7px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in oklab, var(--surface) 80%, transparent); border: 1px solid var(--line); color: var(--ink-2); font: 700 .8rem/1 var(--f-mono); transition: transform .3s, background .3s; pointer-events: none; }
+.toy:hover .toy-open { transform: scale(1.15); background: var(--toy-a); color: #fff; border-color: transparent; }
+@media (max-width: 860px) { .toy { max-width: 420px; } }
+
+.toy-dlg { width: min(1060px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--line); border-radius: 22px; background: var(--surface); color: var(--ink); box-shadow: 0 40px 80px -30px rgb(10 10 30 / .55); overflow: auto; }
+.toy-dlg::backdrop { background: rgb(12 12 30 / .45); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.toy-dlg[open] { animation: dlg-in .45s cubic-bezier(.2,.8,.2,1); }
+.toy-dlg[open]::backdrop { animation: fade-in .3s ease; }
+.toy-dlg.vt[open] { animation: none; }
+@keyframes dlg-in { from { opacity: 0; transform: translateY(14px) scale(.97); } }
+@keyframes fade-in { from { opacity: 0; } }
+.toy-dlg-in { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
+@media (max-width: 820px) { .toy-dlg-in { grid-template-columns: 1fr; } }
+.toy-stage { position: relative; min-height: 0; border-right: 1px solid var(--line);
+  background: radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--muted) 24%, transparent) 1px, transparent 1.3px) 0 0 / 18px 18px, var(--bg); }
+@media (max-width: 820px) { .toy-stage { border-right: 0; border-bottom: 1px solid var(--line); } }
+.toy-stage canvas { display: block; width: 100%; aspect-ratio: 4 / 3; cursor: crosshair; touch-action: none; }
+.toy-side { display: grid; gap: 16px; align-content: start; padding: 24px 24px 26px; min-width: 0; }
+.toy-side h2 { font-size: var(--step-2); }
+.toy-side .eyebrow { display: flex; align-items: center; gap: 8px; }
+.toy-side .eyebrow i { width: 8px; height: 8px; border-radius: 50%; background: var(--toy-a); box-shadow: 11px 0 0 var(--toy-b); margin-right: 12px; }
+.toy-side p { color: var(--ink-2); font-size: .95rem; }
+.toy-ctrls { display: grid; gap: 12px; }
+.toy-ctrls label { display: grid; gap: 6px; font: 600 .76rem/1.2 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.toy-ctrls input[type="range"] { width: 100%; accent-color: var(--toy-a); }
+.toy-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.toy-btns button { padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); font: 600 .84rem/1 var(--f-body); cursor: pointer; transition: border-color .2s, background .2s, color .2s; }
+.toy-btns button:hover { border-color: var(--toy-a); color: var(--ink); }
+.toy-btns button[aria-pressed="true"] { background: var(--toy-a); border-color: var(--toy-a); color: #fff; }
+.toy-read { padding: 10px 12px; border-radius: 10px; background: var(--surface-2); font: 600 .84rem/1.45 var(--f-mono); color: var(--ink); font-variant-numeric: tabular-nums; min-height: 3.4em; }
+.toy-hint { font: 500 .78rem/1.4 var(--f-mono); color: var(--muted); }
+.toy-x { position: absolute; right: 12px; top: 12px; z-index: 2; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 400 1.3rem/1 var(--f-body); cursor: pointer; display: grid; place-items: center; }
+.toy-x:hover { border-color: var(--indigo); }
+::view-transition-group(toy) { animation-duration: .5s; animation-timing-function: cubic-bezier(.2,.8,.2,1); }
+
+/* ---------------------------------------------------------------- background network */
+/* Soft, slightly 3D nodes and edges behind the inner tabs. Tuned by BG in the script. */
+.bg-net { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity .9s ease; }
+.bg-net.on { opacity: 1; }
+
+/* ---------------------------------------------------------------- other */
+.side-cards .card { gap: 9px; }
+.side-cards .kicker { font: 700 .72rem/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.tracks { display: flex; flex-wrap: wrap; gap: 6px; }
+.tracks span { padding: 3px 9px; border-radius: 999px; border: 1px dashed var(--line); font: 500 .8rem/1.4 var(--f-display); font-style: italic; color: var(--ink-2); }
+.project { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px 24px; align-items: center; }
+@media (max-width: 640px) { .project { grid-template-columns: 1fr; } }
+.t-short { display: none; }
+@media (max-width: 720px) {
+  .t-long { display: none; } .t-short { display: inline; }
+  .tabs { justify-content: space-between; }
+  .tabs.more { -webkit-mask-image: linear-gradient(90deg, #000 86%, transparent); mask-image: linear-gradient(90deg, #000 86%, transparent); }
+  .tab { padding: 7px 9px; }
+}
+
+/* ---------------------------------------------------------------- footer + toast */
+footer { border-top: 1px solid var(--line); padding-block: 28px calc(28px + env(safe-area-inset-bottom, 0px)); color: var(--muted); font-size: .9rem; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: space-between; }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 80; visibility: hidden; transform: translate(-50%, calc(100% + 40px)); transition: transform .4s cubic-bezier(.2,.8,.2,1), visibility 0s .4s; padding: 10px 16px; border-radius: 999px; background: var(--ink); color: var(--bg); font: 600 .9rem/1 var(--f-body); box-shadow: var(--shadow); }
+.toast.show { visibility: visible; transform: translate(-50%, 0); transition: transform .4s cubic-bezier(.2,.8,.2,1); }
+.copybox { margin-top: 8px; width: 100%; min-height: 8em; font: 500 .8rem/1.4 var(--f-mono); padding: 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-delay: 0s !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+  .hero .lead mark { background-size: 100% 100%; }
+}
+</style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <a href="#home">Steven Golob</a>
-            </div>
-            <div class="nav-menu" id="nav-menu">
-                <a href="#home" class="nav-link">Home</a>
-                <a href="#research" class="nav-link">Research</a>
-                <a href="#competitions" class="nav-link">Competitions</a>
-                <a href="#service" class="nav-link">Service</a>
-                <a href="#awards" class="nav-link">Awards</a>
-                <a href="#about" class="nav-link">About</a>
-                <a href="#contact" class="nav-link">Contact</a>
-            </div>
-            <div class="hamburger" id="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5M22 9v6"/></symbol>
+  <symbol id="i-gh" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></symbol>
+  <symbol id="i-in" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7v.01M12 17v-4a2.5 2.5 0 0 1 5 0v4M12 10v7"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
+  <symbol id="i-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></symbol>
+</svg>
+
+<div class="progress" id="progress" aria-hidden="true"></div>
+<canvas class="bg-net" id="bg-net" aria-hidden="true"></canvas>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#home" aria-label="Steven Golob, home"><span class="brand-mark" aria-hidden="true">SG</span>Steven Golob</a>
+    <nav class="tabs" id="tabs" aria-label="Sections">
+      <span class="tab-ind" id="tab-ind" aria-hidden="true"></span>
+      <a class="tab" href="#home" data-tab="home">Home</a>
+      <a class="tab" href="#research" data-tab="research">Research</a>
+      <a class="tab" href="#publications" data-tab="publications"><span class="t-long">Publications</span><span class="t-short">Papers</span></a>
+      <a class="tab" href="#teaching" data-tab="teaching">Teaching</a>
+      <a class="tab" href="#cv" data-tab="cv">CV</a>
+      <a class="tab" href="#other" data-tab="other">Other</a>
     </nav>
+    <button class="theme-btn" id="theme-btn" type="button" aria-label="Color theme: system"><svg><use href="#i-auto"/></svg></button>
+  </div>
+</header>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <div class="hero-text">
-                <h1 class="hero-title" id="hero-name">Steven Golob</h1>
-                <p class="hero-subtitle" id="hero-title"></p>
-                <div class="hero-buttons">
-                    <a href="#contact" class="btn btn-primary">Contact</a>
-                    <a href="#research" class="btn btn-secondary">Research</a>
-                </div>
-            </div>
+<main id="main">
+
+<!-- ============================================================ HOME -->
+<section class="view wrap" id="view-home" data-view="home">
+
+  <div class="hero" data-motion-anchor data-lean>
+    <div class="stage" data-parallax="-0.22" aria-hidden="true"><div class="stage-in" id="stage"></div></div>
+    <div class="scrim" aria-hidden="true"></div>
+    <p class="stage-cap" id="stage-cap" aria-hidden="true"></p>
+    <div class="wrap">
+      <div class="hero-text hero-in" data-parallax="0.09">
+        <p class="eyebrow">PhD candidate · Computer Science · University of Washington Tacoma</p>
+        <h1><span>Steven</span> <span>Golob</span></h1>
+        <p class="lead">I build privacy attacks on synthetic data, to test whether a release that is supposed to be safe to share really is, and <mark>when it isn’t, who is exposed first.</mark></p>
+        <p class="status"><span class="pulse" aria-hidden="true"></span>On the faculty job market, 2026–27 · defending May 2027</p>
+        <div class="links">
+          <a class="btn primary" href="Steven_Golob_CV.pdf" target="_blank" rel="noopener"><svg><use href="#i-doc"/></svg>CV (PDF)</a>
+          <button class="btn" type="button" data-copy="golobs@uw.edu" data-toast="Email address copied"><svg><use href="#i-mail"/></svg>golobs@uw.edu</button>
+          <a class="btn" href="https://scholar.google.com/citations?user=gcPNbDsAAAAJ&amp;hl=en" target="_blank" rel="noopener"><svg><use href="#i-cap"/></svg>Scholar</a>
+          <a class="btn" href="https://github.com/steveng9" target="_blank" rel="noopener"><svg><use href="#i-gh"/></svg>GitHub</a>
+          <a class="btn" href="https://www.linkedin.com/in/steven-golob/" target="_blank" rel="noopener"><svg><use href="#i-in"/></svg>LinkedIn</a>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
 
-    <!-- Research Section -->
-    <section id="research" class="section">
-        <div class="container">
-            <h2 class="section-title">Publications</h2>
-            <div class="section-subtitle">Recent work in privacy-preserving machine learning and synthetic data</div>
-            <div id="research-grid" class="research-list">
-                <!-- Research items will be populated by JavaScript -->
-            </div>
+  <div class="about" data-motion-anchor>
+    <div class="section">
+      <div class="section-head"><p class="eyebrow">About</p></div>
+      <div class="prose">
+        <p>I’m a PhD candidate in computer science at the University of Washington Tacoma, where I work with <a href="https://faculty.washington.edu/mdecock/" target="_blank" rel="noopener">Martine De Cock</a> in the <a href="https://faculty.washington.edu/mdecock/ppml/" target="_blank" rel="noopener">Privacy-Preserving Machine Learning group</a>. I study what a synthetic data release gives away about the people in it. Hospitals, statistical agencies and genomics consortia increasingly share sensitive records by training a generative model on the real data and publishing what the model produces, on the understanding that no real person appears in the output. I build attacks on these releases and use them as measuring instruments. A membership inference attack tells whether a person’s record was used to train the generator, and a reconstruction attack fills in values about a person that were never published.</p>
+        <p>My membership inference attack, MAMA-MIA, won the 2023 SNAKE challenge and appeared at <strong>IEEE SaTML 2025</strong>. Earlier attacks trained many copies of the generator to learn what it does; MAMA-MIA instead works out which statistics the generator measured on the hidden training data, which makes it fast enough to audit a release as a matter of course. Our reconstruction attacks won NIST’s 2025 Collaborative Research Cycle and grew into an SoK at <strong>PoPETs 2027</strong>. scMAMA-MIA (<strong>NeurIPS 2026</strong>) carries the approach to synthetic single-cell genomic data, where earlier attacks had done little better than guessing, and shows that these releases leak the most when they come from only a few donors, as many single-cell studies do.</p>
+        <p>Across these projects, the measurements keep showing that a release’s protection is spread unevenly over the people in it. A differential privacy guarantee gives the whole dataset one number, ε, and the results suggest that the same ε covers a record in a dense region far better than a record out on its own. Next, I want to predict each record’s exposure from the shape of the data before any attack is run, and to spend the privacy budget where that shape needs it. <a href="#research">The research page has the details.</a></p>
+        <p>Before the PhD, I wrote software for Boeing’s flight simulator. I’ve played percussion with Symphony Tacoma since 2017.</p>
+      </div>
+    </div>
+    <div class="side" data-lean>
+    <figure class="portrait" data-parallax="-0.06" data-reveal>
+      <div class="frame"><img src="images/photos/headshot-2025.jpg" alt="Steven Golob smiling, outdoors on campus among spring trees and tulips" width="800" height="1200" loading="lazy" decoding="async" data-parallax="0.045"></div>
+    </figure>
+    <dl class="facts" aria-label="Quick facts" data-reveal>
+      <div><dt>Advisor</dt><dd>Martine De Cock</dd></div>
+      <div><dt>Defense</dt><dd>May 2027 (PhD conferred June 2027)</dd></div>
+      <div><dt>Areas</dt><dd>Privacy attacks and auditing, synthetic data, differential privacy, genomic privacy, fairness</dd></div>
+      <div><dt>Visiting</dt><dd>Ghent University and VIB, Belgium (2025)</dd></div>
+    </dl>
+    </div>
+  </div>
+
+  <section class="section" aria-labelledby="fig1-h" data-reveal>
+    <div class="section-head">
+      <p class="eyebrow">Fig. 1 · interactive</p>
+      <h2 id="fig1-h">Who is exposed first?</h2>
+    </div>
+    <figure class="fig" style="margin:0">
+      <canvas id="field" role="img" aria-label="A cloud of points representing records. Most sit in two dense clusters. A thin branch leads to one isolated yellow point. A probe circle counts how many records fall near it: dozens in the clusters, one at the isolated point."></canvas>
+      <figcaption class="fig-cap">
+        <span class="eyebrow">Fig. 1</span>
+        <p>Each dot is a person’s record. Move the probe (or let it wander) and it counts how many records look like the one under it. In the dense clusters a record hides among dozens of neighbors. At the end of the branch, <span class="legend-dot" style="background:var(--dusk);box-shadow:0 0 0 1.5px var(--violet)"></span>one record has none, so anything a release reveals about that region points to one person. That is why rare records are reconstructed first: in our PoPETs study, the most atypical 10% of people were reconstructed 3.4 times as well as everyone else.</p>
+        <a href="#research">Read about the research →</a>
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="section" aria-labelledby="news-h" data-reveal>
+    <div class="section-head"><p class="eyebrow">Recent</p><h2 id="news-h">News</h2></div>
+    <ul class="news" id="news"></ul>
+    <button class="more-btn" id="news-more" type="button" hidden></button>
+  </section>
+
+  <section class="section" aria-labelledby="sel-h" data-reveal>
+    <div class="section-head"><p class="eyebrow">Selected work</p><h2 id="sel-h">Dissertation papers</h2></div>
+    <div class="cards" id="selected"></div>
+    <a href="#publications" style="font-weight:600">All publications →</a>
+  </section>
+</section>
+
+<!-- ============================================================ RESEARCH -->
+<section class="view wrap" id="view-research" data-view="research" hidden>
+  <header class="page-title">
+    <p class="eyebrow">Research</p>
+    <h1>Is the release safe, and for whom?</h1>
+    <p>I study privacy-preserving data releases the way an auditor would, by building the adversary.</p>
+  </header>
+
+  <div class="prose">
+    <p>Every synthetic data release carries a promise, and the promise contains two questions. The first is whether the release is safe: can anyone learn something about a real person from it that they could not have learned without that person’s data? The second, asked far less often, is whether it is equally safe for everyone in it, and when it fails, who is exposed first. I design attacks on these releases and use them as measuring instruments for both questions. A membership attack on synthetic cancer data, for example, could reveal that a person had cancer.</p>
+  </div>
+
+  <article class="thread" data-reveal>
+    <header><p class="eyebrow">Thread 1</p><h2>Is the release safe?</h2><p>Three dissertation papers, from 15-column census tables to 20,000-gene single-cell data.</p><button class="toy" type="button" data-toy="safe"></button></header>
+    <div class="thread-body" id="thread-safe"></div>
+  </article>
+
+  <article class="thread" data-reveal>
+    <header><p class="eyebrow">Thread 2</p><h2>Who is exposed first?</h2><p>Averages hide their tails.</p><button class="toy" type="button" data-toy="exposed"></button></header>
+    <div class="thread-body">
+      <div class="prose">
+        <p>A privacy audit usually reports one number, an average over every record. In our SoK, synthetic data from the diffusion model TabDDPM looks close to safe on average, with a mean row-level reconstruction advantage of 1.4%. Broken down by race, the same release exposes American Indian and Alaska Native individuals (1.1% of the data) at 8.4%, against 1.2% for the White majority. Few synthetic records share a rare combination of public attributes, so each one that does maps back to a single real person. People whose public profiles are the most unusual, as judged by an outlier detector that sees nothing else, are reconstructed 3.4 times as well as everyone else.</p>
+      </div>
+      <figure class="chart" id="chart" style="margin:0">
+        <figcaption class="chart-title">TabDDPM release, mean row-level reconstruction advantage by race (%)</figcaption>
+        <div class="bars" id="bars"></div>
+        <p class="chart-cap">Adult dataset, 10,000 rows, random-forest reconstruction from public demographic attributes. Share of the data in parentheses. Dashed line: the mean over everyone. Source: Golob et al., PoPETs 2027, Table 7.</p>
+      </figure>
+      <div class="prose">
+        <p>The single-cell work finds the same pattern along a different axis. Leakage grows as the number of donors shrinks, and on the AIDA immune atlas with 20 donors (about 43,000 cells) our attack reaches an AUC of 1.00. Differential privacy behaves differently: in the SoK it kept every subgroup within 1.5 times of its mean, which is the evenness its guarantee promises. Across three kinds of data and more than twenty generators, the measurements keep finding that a release’s protection is spread unevenly over the people in it, and that where a person sits in the data decides how much of it they get.</p>
+      </div>
+    </div>
+  </article>
+
+  <article class="thread" data-reveal>
+    <header><p class="eyebrow">Thread 3 · next</p><h2>One ε, a shaped object</h2><p>Where I want to take this as faculty.</p><button class="toy" type="button" data-toy="shaped"></button></header>
+    <div class="thread-body">
+      <div class="prose">
+        <p>A differential privacy guarantee is one number, ε, handed to an entire dataset. Data has shape, and the results above suggest that the same ε gives a record in a dense region far more cover than a record out on its own. I want to work on three things. The first is predicting each record’s exposure from the geometry of the data before any attack is run, from quantities such as local density and how well connected a record is to its neighbors. The second is differentially private mechanisms, with proofs, whose noise follows that shape. In single-cell data, for example, much of a cell’s state is shared across donors (its cell type, common biology), and only the donor-specific deviation identifies anyone. The third is privacy for data that is itself a graph of people, such as a pedigree or a referral network, where even deciding what counts as one person’s contribution is a choice about shape.</p>
+      </div>
+      <p class="callout">These are directions with first experiments planned, not results yet. The first one is cheap: compare each donor’s connectivity in a nearest-neighbor graph against how often scMAMA-MIA catches them.</p>
+    </div>
+  </article>
+
+  <article class="thread" data-reveal>
+    <header><p class="eyebrow">Also</p><h2>Fairness you can edit in</h2><p>NeurIPS 2026 workshop, FAccT version in progress.</p><button class="toy" type="button" data-toy="fair"></button></header>
+    <div class="thread-body">
+      <div class="prose">
+        <p>Whoever generates a synthetic dataset chooses the generating process, and a process can be edited. DECAF showed that three fairness definitions become three sets of edge cuts on one GAN’s causal graph. We ported the cuts to nine generators from three unrelated families (marginals-based, GAN, and diffusion, each with differentially private variants), over 2,520 matched-pair runs on the Adult and COMPAS datasets. The mechanism transfers to all of them. Our causal diffusion backbone produced the fairest release of any family we tested, the cut barely moves fidelity, it costs a downstream classifier about 0.07 to 0.15 AUC on average, and adding privacy guarantees doesn’t make the data less fair.</p>
+      </div>
+      <div class="linkrow"><a href="https://arxiv.org/abs/2609.03180" target="_blank" rel="noopener">arXiv</a><a href="pdfs/Causal_Fairness_AI4Good_NeurIPS_2026.pdf" target="_blank" rel="noopener">PDF</a><a href="https://github.com/steveng9/CausalFairnessInSDG" target="_blank" rel="noopener">Code</a></div>
+    </div>
+  </article>
+
+  <article class="thread" data-reveal>
+    <header><p class="eyebrow">Also</p><h2>Computing on data no one can see</h2><p>Secure computation and federated learning, from 2022 to the iDASH 2026 win.</p><button class="toy" type="button" data-toy="mpc"></button></header>
+    <div class="thread-body">
+      <div class="prose">
+        <p>Before synthetic data, I worked on cryptographic routes to the same goal. Our federated system for detecting fraudulent bank transfers, built on privacy-preserving membership queries across institutions, took second place in the US–UK PETs Prize Challenge and became a PoPETs 2024 paper. A decentralized data marketplace that keeps both buyers’ inputs and sellers’ outputs private appeared at the SIGMOD Data Economy Workshop in 2023. In 2026 our team won first place in Track III of the iDASH privacy and security competition, which asked for fast two-party secure inference of a drug–target interaction model on GPUs. A pharmaceutical company’s candidate drugs are its intellectual property, so the drug is split into secret shares held by two servers, and neither server learns it. We designed SlimDTA, a model that performs fewer operations on the secret drug (in particular fewer of the nonlinear ones, which need the servers to communicate), and a GPU framework that evaluates the linear layers on additive shares and the nonlinear layers with function secret sharing. Ours was the fastest of the four finalist solutions on all three of the organizers’ tests, at 8.1 to 9.2 ms per prediction, and its predictions match the plaintext model to within 0.02%.</p>
+      </div>
+      <div class="linkrow"><a href="https://arxiv.org/abs/2611.25664" target="_blank" rel="noopener">iDASH write-up (arXiv)</a><a href="https://arxiv.org/pdf/2611.25664" target="_blank" rel="noopener">PDF</a><a href="https://humangenomeprivacy.org/2026/competition-tasks.html" target="_blank" rel="noopener">Competition tasks</a></div>
+    </div>
+  </article>
+
+  <div class="photo-trio" data-photos="research" data-motion-anchor hidden></div>
+
+  <section class="section" aria-labelledby="proj-h">
+    <div class="section-head"><p class="eyebrow">Project</p><h2 id="proj-h">Making Biomedical Data FAIR on the NAIRR</h2></div>
+    <article class="card project" data-reveal>
+      <div style="display:grid;gap:10px;min-width:0">
+        <span class="venue">NSF EAGER · NAIRR Pilot · award 2451163 · 2025–27</span>
+        <p>A UW Tacoma and Sage Bionetworks project on the National AI Research Resource. It builds open, privacy-preserving synthetic replicas of access-controlled biomedical data, trains generators across repositories that never share their records, and audits what the replicas reveal with attacks like ours. I built the project’s website, including its two interactive figures.</p>
+        <div class="linkrow"><a href="https://ppml.tacoma.uw.edu/nairr-pilot/" target="_blank" rel="noopener">Project website</a><!-- Add when the repo is public: <a href="https://github.com/ppmluwt/Nairr-pilot-webpage" target="_blank" rel="noopener">Website source</a> --><a href="https://www.nsf.gov/awardsearch/show-award?AWD_ID=2451163" target="_blank" rel="noopener">NSF award</a></div>
+      </div>
+      <a class="btn primary" href="https://ppml.tacoma.uw.edu/nairr-pilot/" target="_blank" rel="noopener">Visit the project site</a>
+    </article>
+  </section>
+
+  <section class="section" aria-labelledby="comp-h">
+    <div class="section-head"><p class="eyebrow">Tested in public</p><h2 id="comp-h">Competitions</h2><p>Red-team competitions score attacks on data the attacker has never seen, against other teams’ best ideas. They are the closest thing this field has to an external check.</p></div>
+    <ol class="timeline" id="timeline"></ol>
+  </section>
+
+  <section class="section" aria-labelledby="code-h">
+    <div class="section-head"><p class="eyebrow">Open source</p><h2 id="code-h">Code and artifacts</h2></div>
+    <div class="repos" id="repos"></div>
+  </section>
+
+  <section class="section" aria-labelledby="collab-h">
+    <div class="section-head"><p class="eyebrow">People</p><h2 id="collab-h">Collaborators</h2></div>
+    <div class="people">
+      <a class="person" href="https://faculty.washington.edu/mdecock/" target="_blank" rel="noopener">Martine De Cock <small>UW Tacoma, advisor</small></a>
+      <a class="person" href="https://sikhapentyala.github.io/" target="_blank" rel="noopener">Sikha Pentyala <small>UW Tacoma</small></a>
+      <a class="person" href="https://pecky.be/" target="_blank" rel="noopener">Jonathan Peck <small>Ghent University / VIB</small></a>
+      <a class="person" href="https://scholar.google.com/citations?user=LNtKWuIAAAAJ&amp;hl=en" target="_blank" rel="noopener">Luca Foschini <small>Sage Bionetworks</small></a>
+      <a class="person" href="https://scholar.google.com/citations?user=H0vf5OgAAAAJ&amp;hl=en" target="_blank" rel="noopener">Jineta Banerjee <small>Sage Bionetworks</small></a>
+      <a class="person" href="https://www.linkedin.com/in/patrick-mckeever-85425221b/" target="_blank" rel="noopener">Patrick McKeever <small>UW Tacoma</small></a>
+      <a class="person" href="https://filienko.github.io/" target="_blank" rel="noopener">Daniil Filienko <small>UW Tacoma</small></a>
+      <a class="person" href="https://anderson-nascimento.squarespace.com" target="_blank" rel="noopener">Anderson Nascimento <small>UW Tacoma and Visa Research, in memoriam</small></a>
+      <a class="person" href="https://jellevos.github.io/" target="_blank" rel="noopener">Jelle Vos <small>TU Delft</small></a>
+      <a class="person" href="https://hkmztrk.github.io/" target="_blank" rel="noopener">Hakime Öztürk <small>EMBL Heidelberg</small></a>
+    </div>
+  </section>
+</section>
+
+<!-- ============================================================ PUBLICATIONS -->
+<section class="view wrap" id="view-publications" data-view="publications" hidden>
+  <header class="page-title">
+    <p class="eyebrow">Publications</p>
+    <h1>Papers</h1>
+    <p>Also on <a href="https://scholar.google.com/citations?user=gcPNbDsAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar</a>. My name is in bold; † marks an undergraduate I mentored.</p>
+  </header>
+  <div class="section">
+    <div class="pub-tools" role="search">
+      <div class="chips" id="chips" aria-label="Filter by type"></div>
+      <label class="search"><span class="eyebrow" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Search publications</span><input id="q" type="search" placeholder="Search titles, venues, authors" autocomplete="off"><kbd aria-hidden="true">/</kbd></label>
+      <span class="count" id="count" aria-live="polite"></span>
+    </div>
+    <div id="pub-list" class="section"></div>
+  </div>
+</section>
+
+<!-- ============================================================ TEACHING -->
+<section class="view wrap" id="view-teaching" data-view="teaching" hidden>
+  <header class="page-title">
+    <p class="eyebrow">Teaching and mentoring</p>
+    <h1>Start where the student is</h1>
+  </header>
+
+  <div class="prose">
+    <p>I presented my master’s thesis about a dozen times: to my committee, at a conference, on a poster, to undergraduates, to a room of university administrators, in thirty minutes and in three. I went in assuming these audiences sat along one line, from non-technical to technical, and that each new version meant sliding along it. The line turned out not to exist. The administrators had no reason to know what a marginal distribution was, but they knew far better than I did what happens to an institution when records it promised to protect turn up somewhere they shouldn’t. The undergraduates could have computed a marginal in a few lines of Python, and had never wondered whether a dataset could be anonymous in the first place. Each audience was missing a different piece, so each version needed a different way in (a picture for one, a worked example for another, an analogy for a third).</p>
+    <p>The first thing I try to do as a teacher is still to find out what the person in front of me already understands, which is rarely what I would have guessed, and start there.</p>
+  </div>
+
+  <div class="photo-trio" data-photos="teaching" data-motion-anchor hidden></div>
+
+  <div class="cv-grid">
+    <div class="cv-row">
+      <h2>Teaching</h2>
+      <ul class="entries">
+        <li><span class="when">Fall 2026</span><span class="what"><b>Graduate Teaching Assistant, TCSS 305 Programming Practicum</b><span>UW Tacoma, with Prof. Tom Capaul. Lectures, office hours, assignment design, grading, and one-on-one tutoring for a junior-level programming course.</span></span></li>
+        <li><span class="when">Winter 2025</span><span class="what"><b>Graduate Teaching Assistant, TCSS 305 Programming Practicum</b><span>UW Tacoma, with Prof. Charles Bryan. Same course, same duties.</span></span></li>
+        <li><span class="when">2021–22</span><span class="what"><b>Quantitative Tutor</b><span>Quantitative and Symbolic Reasoning Center (QuaSR), Evergreen State College. Mathematics, statistics, and computing for students across majors.</span></span></li>
+        <li><span class="when">2020–21</span><span class="what"><b>Snowboard Instructor</b><span>Crystal Mountain. Students aged eight to forty-plus, which is its own lesson in explaining one motion many ways.</span></span></li>
+        <li><span class="when">2018</span><span class="what"><b>Lab Instructor, introductory programming</b><span>UW Tacoma. Taught fundamentals of computer science in Python, held office hours, and graded projects and exams.</span></span></li>
+        <li><span class="when">2018</span><span class="what"><b>Mathematics Tutor</b><span>Teaching and Learning Center, UW Tacoma; and Oakland High School, Tacoma, through Communities in Schools.</span></span></li>
+      </ul>
+    </div>
+
+    <div class="cv-row">
+      <h2>Mentoring</h2>
+      <div class="thread-body">
+        <div class="paper">
+          <span class="venue">CAMDA 2026 · bulk RNA-seq red team</span>
+          <h3>Three undergraduates, one winning attack</h3>
+          <p>In 2026 I mentored three undergraduates, Charlene Jarrell, Jonathan Kim, and Emma Szebenyi, on our group’s red team for the bulk RNA-seq track of the CAMDA Health Privacy Challenge. Most of them had never seen an adversarial privacy problem. I set the direction and the methods and worked through ideas with them as questions came up. Their attack won the track, and they won the best presentation award at ISMB 2026, where they presented it.</p>
+          <div class="linkrow"><a href="pdfs/CAMDA_Extended_Abstract_2026__Red_Team_Bulk.pdf" target="_blank" rel="noopener">Extended abstract</a><a href="https://github.com/steveng9/CAMDA-26-PPMLHuskies-RedTeam-bulkRNAseq" target="_blank" rel="noopener">Code</a></div>
         </div>
-    </section>
+        <ul class="entries">
+          <li><span class="when">2025</span><span class="what"><b>Shane Menzies, undergraduate</b><span>First author of our CAMDA 2025 paper on synthetic bulk RNA-seq generation (Track I winner, ISMB/ECCB 2025), and a co-author of the community benchmark in <i>Genome Biology</i>.</span></span></li>
+          <li><span class="when">2024</span><span class="what"><b>Trae Claar, undergraduate</b><span>First author of “Securely Generating Synthetic Genomic Data from Distributed Data Silos” (GenoPri 2024).</span></span></li>
+        </ul>
+      </div>
+    </div>
 
-    <!-- Competitions Section -->
-    <section id="competitions" class="section section-alt">
-        <div class="container">
-            <h2 class="section-title">Competitions</h2>
-            <div class="section-subtitle">Research challenges and academic competitions</div>
-            <div id="competitions-grid" class="competitions-list">
-                <!-- Competition items will be populated by JavaScript -->
-            </div>
+    <div class="cv-row">
+      <h2>In a course</h2>
+      <div class="prose">
+        <p>I finished a bachelor’s and a master’s degree without AI, and now use it every day in research to get other people’s code running and to manage experiments. A student in an introductory course doesn’t have that ordering available, and I think it shapes what a course should ask of them.</p>
+        <p>So on the first day I would ask students what they expect from the course and which tools they already use, and how, and then be just as direct about my own expectations. I would grade the process along with the finished program, since the finished program is now the cheapest part to produce. And I want to try an inverse oral exam: I explain the assignment aloud, carefully and more than once, and the student’s job is to turn what they heard into a written specification and then a working system. Whether or not they use AI, that translation is the work.</p>
+        <p>I also try to be an easy person to ask. Part of what makes a chatbot attractive is that it is easier to ask than a person, and office hours only compete with that if asking me is easy too.</p>
+      </div>
+    </div>
+
+    <!-- DRAFT: confirm this list with Steven before going live. -->
+    <div class="cv-row">
+      <h2>Courses</h2>
+      <div class="prose">
+        <p>I’m prepared to teach introductory and intermediate programming, data structures, discrete mathematics, machine learning, and computer security. I would like to build a course on data privacy that runs like a red-team competition, with students attacking real synthetic releases and defending their own.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CV -->
+<section class="view wrap" id="view-cv" data-view="cv" hidden>
+  <header class="cv-top">
+    <div class="page-title"><p class="eyebrow">Curriculum vitae</p><h1>CV</h1></div>
+    <a class="btn primary" href="Steven_Golob_CV.pdf" target="_blank" rel="noopener"><svg><use href="#i-doc"/></svg>Download full CV (PDF)</a>
+  </header>
+
+  <div class="cv-grid">
+    <div class="cv-row">
+      <h2>Education</h2>
+      <ul class="entries">
+        <li><span class="when">2024–2027</span><span class="what"><b>PhD, Computer Science, University of Washington Tacoma</b><span>Advisor: Martine De Cock. Defense May 2027, graduation June 2027.</span></span></li>
+        <li><span class="when">2022–2024</span><span class="what"><b>MSc, Computer Science, University of Washington Tacoma</b><span>GPA 4.0. Thesis: <a href="https://digital.lib.washington.edu/researchworks/items/d893d8a5-37b2-48e8-a821-522294c0f5dd" target="_blank" rel="noopener"><em>Privacy Vulnerabilities in Marginals-based Synthetic Data</em></a>, UW Distinguished Thesis Award and WAGS/ProQuest Distinguished Thesis Award.</span></span></li>
+        <li><span class="when">2021–2022</span><span class="what"><b>Creative writing, Evergreen State College</b><span>Non-degree enrichment study.</span></span></li>
+        <li><span class="when">2016–2019</span><span class="what"><b>BSc, Computer Science, University of Washington Tacoma</b><span>GPA 4.0, summa cum laude.</span></span></li>
+        <li><span class="when">2013–2015</span><span class="what"><b>Music performance, Central Washington University</b><span>BA coursework, not completed.</span></span></li>
+      </ul>
+    </div>
+
+    <div class="cv-row">
+      <h2>Positions</h2>
+      <ul class="entries">
+        <li><span class="when">2022–present</span><span class="what"><b>Graduate Research Assistant, UW Tacoma</b><span>Privacy-preserving machine learning: synthetic data, membership inference and reconstruction attacks, differential privacy, secure multiparty computation, fairness.</span></span></li>
+        <li><span class="when">2025, 2026</span><span class="what"><b>Graduate Teaching Assistant, TCSS 305, UW Tacoma</b><span>Winter 2025 with Charles Bryan; Fall 2026 with Tom Capaul.</span></span></li>
+        <li><span class="when">2025</span><span class="what"><b>Visiting Scholar, Ghent University and VIB, Belgium</b><span>Two-month research visit hosted by Jonathan Peck, funded by an IEEE Graduate Research Travel Grant. The scMAMA-MIA work started here.</span></span></li>
+        <li><span class="when">2019–2021</span><span class="what"><b>Software Engineer, The Boeing Company</b><span>Core scheduling and message-routing logic, in Rust, for a new flight simulation executive. “Far Exceeds Expectations” review on departure.</span></span></li>
+        <li><span class="when">2018–2019</span><span class="what"><b>Software Development Intern, Pierce County</b><span>Test-driven development on the county’s application core, including an application for the Medical Examiner.</span></span></li>
+      </ul>
+    </div>
+
+    <div class="cv-row">
+      <h2>Awards and fellowships</h2>
+      <ul class="entries" id="awards"></ul>
+    </div>
+
+    <div class="cv-row">
+      <h2>Talks and posters</h2>
+      <ul class="entries" id="talks"></ul>
+    </div>
+
+    <div class="cv-row">
+      <h2>Service</h2>
+      <ul class="entries">
+        <li><span class="when">2023–present</span><span class="what"><b>Reviewer</b><span>NeurIPS, ECAI, Journal of Emerging Investigators.</span></span></li>
+        <li><span class="when">2026</span><span class="what"><b>Faculty Judge, Puget Sound Programming Competition</b></span></li>
+        <li><span class="when">2025</span><span class="what"><b>Best Poster Award Judge, SET Research Showcase, UW Tacoma</b></span></li>
+        <li><span class="when">2024–present</span><span class="what"><b>Student Ambassador, School of Engineering and Technology, UW Tacoma</b><span>Talking with prospective students about the program.</span></span></li>
+        <li><span class="when">2022–2023</span><span class="what"><b>Graduate Student Representative</b><span>Computer Science and Systems Program Committee, UW Tacoma.</span></span></li>
+        <li><span class="when">2019</span><span class="what"><b>Undergraduate Student Representative</b><span>Computer Science and Systems Program Committee, UW Tacoma.</span></span></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================================ OTHER -->
+<section class="view wrap" id="view-other" data-view="other" hidden>
+  <header class="page-title">
+    <p class="eyebrow">Other interests</p>
+    <h1>Simulations, games, and music</h1>
+    <p>What I work on when it isn’t privacy: artificial life, a cloud computing study, two games, and a lot of percussion.</p>
+  </header>
+
+  <section class="section" aria-labelledby="alife-h">
+    <div class="section-head"><p class="eyebrow">Artificial life</p><h2 id="alife-h">Agents, norms, and automata</h2><p>I write these up as I go on <a href="https://stevengolob.substack.com/" target="_blank" rel="noopener">A Scientific Webzine</a>, my Substack, failed attempts included.</p></div>
+    <div class="cards side-cards">
+      <article class="card" data-reveal style="--i:0">
+        <span class="kicker">Substack · 2025–</span>
+        <h3><a href="https://stevengolob.substack.com/" target="_blank" rel="noopener">A Scientific Webzine</a></h3>
+        <p>Posts on simulations of social agents and what they did, in the order it happened. The latest introduces a trading simulation built to study norms of norms.</p>
+        <div class="linkrow"><a href="https://stevengolob.substack.com/" target="_blank" rel="noopener">Read</a><a href="https://stevengolob.substack.com/p/trading-agents-and-trades-built-on" target="_blank" rel="noopener">Latest post</a></div>
+      </article>
+      <article class="card" data-reveal style="--i:1">
+        <span class="kicker">Simulation · 2026</span>
+        <h3><a href="https://steveng9.github.io/hierarchical_trades.github.io/" target="_blank" rel="noopener">Hierarchical trades</a></h3>
+        <p>Agents that never move sit on a map where each region is rich in one resource and poor in the others, so they have to trade. Once a trade earns a surplus, another agent can build a trade on top of it. The question is whether hierarchies of institutions emerge from local trading, and what they do once they have.</p>
+        <div class="linkrow"><a href="https://steveng9.github.io/hierarchical_trades.github.io/" target="_blank" rel="noopener">Run it</a><a href="https://stevengolob.substack.com/p/trading-agents-and-trades-built-on" target="_blank" rel="noopener">Post</a><a href="https://github.com/steveng9/hierarchical_trades.github.io" target="_blank" rel="noopener">Code</a></div>
+      </article>
+      <article class="card" data-reveal style="--i:2">
+        <span class="kicker">Simulation · 2025</span>
+        <h3><a href="https://stevengolob.substack.com/p/q-learning-to-foster-social-norms" target="_blank" rel="noopener">Q-learning in a pond</a></h3>
+        <p>With Chris Marriott: agents that can fish, eat, reproduce, or rest, which we hoped would learn norms, and then norms about those norms. Mostly they learned to rest until they were critically hungry.</p>
+        <div class="linkrow"><a href="https://stevengolob.substack.com/p/q-learning-to-foster-social-norms" target="_blank" rel="noopener">Post</a><a href="https://github.com/algorithm0r/Sustainable-Hierarchy" target="_blank" rel="noopener">Code</a></div>
+      </article>
+      <article class="card" data-reveal style="--i:3">
+        <span class="kicker">Agent-based model · 2026</span>
+        <h3><a href="https://steveng9.github.io/BirdsInTheGrid/" target="_blank" rel="noopener">Birds in the Grid</a></h3>
+        <p>Mother ducks lead flightless broods from the nest to water across roads, fences, and buildings. The mother knows which way the water is and nothing else. The model counts how many of 500 broods arrive under different street layouts, and which fixes (tunnels, drift fences, gaps in barriers) help.</p>
+        <div class="linkrow"><a href="https://steveng9.github.io/BirdsInTheGrid/" target="_blank" rel="noopener">Run it</a><a href="https://github.com/steveng9/BirdsInTheGrid" target="_blank" rel="noopener">Code</a></div>
+      </article>
+      <article class="card" data-reveal style="--i:0">
+        <span class="kicker">Cellular automata · 2026</span>
+        <h3><a href="https://steveng9.github.io/InverseAutomata/" target="_blank" rel="noopener">Inverse automata</a></h3>
+        <p>Hide a cellular automaton’s rule, show a model unordered pairs of consecutive states, and ask it to recover the rule, in any number of dimensions and colors and with optional noise.</p>
+        <div class="linkrow"><a href="https://steveng9.github.io/InverseAutomata/" target="_blank" rel="noopener">Explorer</a><a href="https://github.com/steveng9/InverseAutomata" target="_blank" rel="noopener">Code</a></div>
+      </article>
+      <article class="card" data-reveal style="--i:1">
+        <span class="kicker">Graph neural networks · 2026</span>
+        <h3><a href="https://github.com/steveng9/GraphPhenomena" target="_blank" rel="noopener">Can a GNN learn physics?</a></h3>
+        <p>Two study repositories, written from scratch to be read end to end: an N-dimensional many-body physics engine whose update rule a graph network will try to recover, and GNNs that classify which Wolfram rule generated a graph.</p>
+        <div class="linkrow"><a href="https://github.com/steveng9/GraphPhenomena" target="_blank" rel="noopener">GraphPhenomena</a><a href="https://github.com/steveng9/GraphAutomata" target="_blank" rel="noopener">GraphAutomata</a></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="sys-h">
+    <div class="section-head"><p class="eyebrow">Systems</p><h2 id="sys-h">Cloud computing</h2></div>
+    <div class="cards side-cards">
+      <article class="card" data-reveal>
+        <span class="kicker">Course project · TCSS 562 · 2024</span>
+        <h3><a href="pdfs/LambdaMap_TCSS562_2024.pdf" target="_blank" rel="noopener">LambdaMap: serverless MapReduce</a></h3>
+        <p>With Austin Bomhold and Simarpal Singh. A master AWS Lambda function invokes N worker Lambdas to run MapReduce, and we compared it with PySpark on Fargate and on EC2 instances of several sizes, for word count and iterative k-means, on cost, runtime, and memory. The project ran on $100 of AWS credits, $82.04 of which it used.</p>
+        <div class="linkrow"><a href="pdfs/LambdaMap_TCSS562_2024.pdf" target="_blank" rel="noopener">Report (PDF)</a><a href="https://github.com/steveng9/MapReduceInLambda" target="_blank" rel="noopener">Code</a></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="games-h">
+    <div class="section-head"><p class="eyebrow">Games</p><h2 id="games-h">Playable in a browser</h2></div>
+    <div class="cards side-cards">
+      <article class="card" data-reveal style="--i:0">
+        <span class="kicker">HTML5 canvas · 2019</span>
+        <h3><a href="https://steveng9.github.io/Zerlin/" target="_blank" rel="noopener">Zerlin</a></h3>
+        <p>A Star Wars-themed side-scrolling action game, written with Joshua Atherton and Michael Josten for TCSS 491, Computational Worlds. It took third place in the course’s competition. Click once before expecting sound.</p>
+        <div class="linkrow"><a href="https://steveng9.github.io/Zerlin/" target="_blank" rel="noopener">Play</a><a href="https://github.com/steveng9/Zerlin" target="_blank" rel="noopener">Code</a></div>
+      </article>
+      <article class="card" data-reveal style="--i:1">
+        <span class="kicker">WebRTC · 2026</span>
+        <h3><a href="https://steveng9.github.io/3DChess/" target="_blank" rel="noopener">3D chess</a></h3>
+        <p>Chess in an N × N × N cube you can rotate freely. Two players connect peer to peer, and anyone else can drop in to watch. The movement rules are placeholders for now (the obvious generalization of 2D chess).</p>
+        <div class="linkrow"><a href="https://steveng9.github.io/3DChess/" target="_blank" rel="noopener">Play</a><a href="https://github.com/steveng9/3DChess" target="_blank" rel="noopener">Code</a></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="music-h">
+    <div class="section-head"><p class="eyebrow">Music</p><h2 id="music-h">Percussion, piano, and my own pieces</h2></div>
+    <div class="cards side-cards">
+      <article class="card" data-reveal style="--i:0">
+        <span class="kicker">Bandcamp</span>
+        <h3><a href="https://stevengolob.bandcamp.com/" target="_blank" rel="noopener">My recordings</a></h3>
+        <p>Sixteen pieces I wrote and recorded, among them:</p>
+        <div class="tracks"><span>Samba in 3</span><span>Garden of Pears</span><span>Paraboloidis</span><span>Stainless DeLorean, 2024 Model</span><span>Ice Dungeon</span><span>Music Box</span></div>
+        <div class="linkrow"><a href="https://stevengolob.bandcamp.com/" target="_blank" rel="noopener">Listen</a></div>
+      </article>
+      <article class="card" data-reveal style="--i:1">
+        <span class="kicker">Performance · 2017–</span>
+        <h3><a href="https://symphonytacoma.org/" target="_blank" rel="noopener">Symphony Tacoma</a></h3>
+        <p>I’ve played percussion with Symphony Tacoma since 2017, and before that with the Seattle and Tacoma Youth Symphonies, the Eugene and Yakima Symphonies, and the Marrowstone Music Festival. In 2019 I gave a solo piano recital at UW Tacoma’s Carwein Auditorium.</p>
+      </article>
+      <article class="card" data-reveal style="--i:2">
+        <span class="kicker">MATLAB</span>
+        <h3><a href="https://github.com/steveng9/algorithmic_microtonal_music" target="_blank" rel="noopener">Algorithmic microtonal music</a></h3>
+        <p>A library that generates aleatoric pieces in microtonal tunings, along with their notation.</p>
+        <div class="linkrow"><a href="https://github.com/steveng9/algorithmic_microtonal_music" target="_blank" rel="noopener">Code</a></div>
+      </article>
+    </div>
+  </section>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Steven Golob · School of Engineering and Technology, University of Washington Tacoma · <span class="mono">golobs@uw.edu</span></span>
+    <span>Updated November 2026</span>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<dialog class="toy-dlg" id="toy-dlg" aria-labelledby="toy-title">
+  <button class="toy-x" type="button" id="toy-x" aria-label="Close">×</button>
+  <div class="toy-dlg-in">
+    <div class="toy-stage" id="toy-stage"></div>
+    <div class="toy-side">
+      <p class="eyebrow" id="toy-eyebrow"></p>
+      <h2 id="toy-title"></h2>
+      <p id="toy-cap"></p>
+      <div class="toy-ctrls" id="toy-ctrls"></div>
+      <output class="toy-read" id="toy-read" aria-live="polite"></output>
+      <p class="toy-hint" id="toy-hint"></p>
+    </div>
+  </div>
+</dialog>
+
+<script>
+/* ==================================================================
+   CONTENT. Edit these lists to update the site; the pages render from them.
+   ================================================================== */
+
+// News, newest first. `date` is shown as written.
+const NEWS = [
+  { date: "Nov 2026", html: "Our team won <b>first place in iDASH 2026 Track III</b>, secure drug–target interaction prediction on GPUs, announced at the iDASH workshop. Ours was the fastest of the four finalist solutions on all three tests. The write-up is on <a href='https://arxiv.org/abs/2611.25664' target='_blank' rel='noopener'>arXiv</a>." },
+  { date: "Nov 2026", html: "The website I built for our NSF NAIRR Pilot project, <a href='https://ppml.tacoma.uw.edu/nairr-pilot/' target='_blank' rel='noopener'>Making Biomedical Data FAIR on the NAIRR</a>, is live." },
+  { date: "Nov 2026", html: "Our community benchmark of generative models for privacy-preserving synthetic bulk RNA-seq data was published in <i>Genome Biology</i>." },
+  { date: "Oct 2026", html: "Teaching TCSS 305 (Programming Practicum) this fall as a GTA with Tom Capaul." },
+  { date: "Sep 2026", html: "Awarded the <b>Carwein-Andrews Distinguished Fellowship</b> for 2026–27, my third." },
+  // TODO: confirm the month of these three acceptances.
+  { date: "2026", html: "<b>Membership Inference on Synthetic Single-Cell Genomic Data</b> (scMAMA-MIA) accepted at <b>NeurIPS 2026</b>." },
+  { date: "2026", html: "<b>Portable Causal Fairness Across Synthetic Data Generator Families</b> accepted at the NeurIPS 2026 Workshop on Trustworthy AI for Good." },
+  { date: "2026", html: "<b>SoK: Reconstruction Attacks on Synthetic Tabular Data</b> accepted at <b>PoPETs 2027</b>, with its artifact on <a href='https://doi.org/10.5281/zenodo.22701232' target='_blank' rel='noopener'>Zenodo</a>." },
+  { date: "Jul 2026", html: "We won <b>both red-team tracks</b> of the CAMDA 2026 Health Privacy Challenge (bulk and single-cell RNA-seq). The three undergraduates I mentored on the bulk team won best presentation at ISMB 2026." },
+  { date: "2026", html: "Received the SET Outstanding Graduate Research Award, UW Tacoma." },
+  { date: "2025", html: "First place in NIST’s <b>Collaborative Research Cycle</b> red-team evaluation of reconstruction attacks." },
+  { date: "2025", html: "Two months as a visiting scholar at Ghent University and VIB, Belgium, with Jonathan Peck, funded by an IEEE Graduate Research Travel Grant." },
+  { date: "Jul 2025", html: "Presented our CAMDA 2025 results at ISMB/ECCB 2025 in Liverpool. Our group won Track I." },
+  { date: "Apr 2025", html: "Presented MAMA-MIA at IEEE SaTML 2025 in Copenhagen." },
+  { date: "2025", html: "My master’s thesis received the WAGS/ProQuest Distinguished Thesis Award, after the UW Distinguished Thesis Award in 2024 (<a href='https://www.tacoma.uw.edu/news/golob-wins-awards-thesis-data-privacy' target='_blank' rel='noopener'>UW Tacoma news</a>)." },
+];
+const NEWS_SHOWN = 7;
+
+// Publications, newest first. kind: journal | conference | workshop | preprint | thesis.
+// `first: true` marks first-author papers. A † after a name marks a mentored undergraduate.
+const PUBS = [
+  { id: "sok", year: 2027, kind: "journal", first: true, selected: true,
+    title: "SoK: Reconstruction Attacks on Synthetic Tabular Data (Insights from Winning the NIST CRC)",
+    authors: "Steven Golob, Sikha Pentyala, Martine De Cock",
+    venue: "Proceedings on Privacy Enhancing Technologies (PoPETs)", short: "PoPETs 2027", note: "Issue 1, to appear",
+    url: "https://arxiv.org/abs/2606.08372",
+    links: { arXiv: "https://arxiv.org/abs/2606.08372", Code: "https://github.com/steveng9/Reconstruction", Artifact: "https://doi.org/10.5281/zenodo.22701232" },
+    tldr: "Fourteen reconstruction attacks against thirteen generators on five datasets. The generator decides the risk far more than the attack does.",
+    stats: ["14 attacks × 13 generators", "1st, NIST CRC 2025"],
+    abstract: "Synthetic data is increasingly promoted as a privacy-preserving substitute for releasing sensitive tabular records, yet its central adversarial threat (reconstruction, the recovery of an individual’s hidden attribute values from a synthetic release and a handful of known quasi-identifiers) has been studied only in scattered, hard-to-compare settings. We systematize reconstruction (equivalently, attribute inference) attacks on de-identified and synthetic tabular data. We contribute a taxonomy that organizes attacks by the structure they exploit; a broad, controlled empirical evaluation, pitting fourteen attacks against thirteen synthetic data generation (SDG) methods across five benchmark datasets; and a set of new attacks that fill gaps in the taxonomy, one of which (CoBP-RA) is the strongest attack we measure. We also introduce a methodology for interpreting what attack success means: a memorization test that distinguishes reconstruction of the population distribution from memorization of training records, and a reduction that places reconstruction and membership inference on a single comparable scale. Our findings: the choice of SDG method governs risk far more than the choice of attack; differential privacy reduces reconstruction steadily up to ε≈10, above which reconstruction risk levels off for all six DP mechanisms we sweep, bounded by what each synthesizer can represent rather than by its noise; de-identification methods are the most exposed, with diffusion the only synthesizer close behind; and most reconstruction reflects distributional structure rather than memorization, concentrating individual risk on atypical records. Our attacks and infrastructure are externally validated by our first-place finish in the 2025 National Institute of Standards and Technology (NIST) Collaborative Research Cycle.",
+    bib: "@article{golob2027sok,\n  title   = {{SoK}: Reconstruction Attacks on Synthetic Tabular Data (Insights from Winning the {NIST} {CRC})},\n  author  = {Golob, Steven and Pentyala, Sikha and De Cock, Martine},\n  journal = {Proceedings on Privacy Enhancing Technologies},\n  volume  = {2027},\n  number  = {1},\n  year    = {2027}\n}" },
+  { id: "scmamamia", year: 2026, kind: "conference", first: true, selected: true,
+    title: "Membership Inference on Synthetic Single-Cell Genomic Data",
+    authors: "Steven Golob, Patrick McKeever, Sikha Pentyala, Martine De Cock, Jonathan Peck",
+    venue: "Advances in Neural Information Processing Systems (NeurIPS)", short: "NeurIPS 2026",
+    url: "https://www.biorxiv.org/content/10.64898/2026.01.22.701160v2",
+    links: { bioRxiv: "https://www.biorxiv.org/content/10.64898/2026.01.22.701160v2", Code: "https://github.com/steveng9/scRNA-seq_privacy_audits" },
+    tldr: "The first attack meaningfully above random guessing against state-of-the-art single-cell RNA-seq generators. It transfers from scDesign2 to scDesign3 and scVI.",
+    stats: ["AUC 1.00 at 20 donors (AIDA)", "noise: 0.66 → 0.54"],
+    abstract: "Single-cell RNA sequencing (scRNA-seq) data is subject to strict access control due to its sensitive nature, motivating the use of synthetic data generation (SDG) for privacy-preserving data sharing. We present the first adversarial privacy attack that performs meaningfully above random guessing against state-of-the-art scRNA-seq SDG methods. Our attack enables donor-level membership inference, demonstrating that leading SDG techniques fail to adequately mask which individuals were used to train the generator. We show that privacy leakage increases as the number of training donors decreases. Although the attack is designed to exploit vulnerabilities in scDesign2, we find that it also succeeds against synthetic data generated by other leading methods, including scDesign3 and scVI. This transferability indicates that an adversary can infer sensitive information from synthetic data without access to the training procedure, model parameters, or even the underlying generation algorithm. Finally, we investigate the use of perturbation with noise during the SDG process as a first-line defense, empirically evaluating its effectiveness in neutralizing the attack and its impact on utility.",
+    bib: "@inproceedings{golob2026scmamamia,\n  title     = {Membership Inference on Synthetic Single-Cell Genomic Data},\n  author    = {Golob, Steven and McKeever, Patrick and Pentyala, Sikha and De Cock, Martine and Peck, Jonathan},\n  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},\n  year      = {2026}\n}" },
+  { id: "causal", year: 2026, kind: "workshop", first: true,
+    title: "Portable Causal Fairness Across Synthetic Data Generator Families",
+    authors: "Steven Golob, Sikha Pentyala, Martine De Cock",
+    venue: "NeurIPS 2026 Workshop on Trustworthy AI for Good", short: "NeurIPS 2026 workshop",
+    url: "https://arxiv.org/abs/2609.03180",
+    links: { arXiv: "https://arxiv.org/abs/2609.03180", PDF: "pdfs/Causal_Fairness_AI4Good_NeurIPS_2026.pdf", Code: "https://github.com/steveng9/CausalFairnessInSDG" },
+    abstract: "When a statistical agency or regulator releases synthetic data in place of sensitive records, it chooses the generator that produces the table, and can shape that generator so unfair pathways are absent. DECAF made this concrete on one non-private GAN: three fairness definitions become three sets of edge cuts on the generator’s causal graph. Whether the mechanism belongs to DECAF, or to causal factorisation itself, was untested. We port all three definitions to nine generators from three unrelated families (marginals-based, GAN, and diffusion, each with differentially private variants), across three levels of formal privacy guarantee, over 2,520 matched-pair runs on Adult and COMPAS datasets. The mechanism transfers everywhere, and our new causal diffusion backbone yields the fairest release of any family we tested, at fidelity close to the marginals tier. Applying the cut barely moves fidelity, only costs a downstream classifier about 0.07 to 0.15 AUC on average, and adding privacy guarantees don’t make the data less fair.",
+    bib: "@inproceedings{golob2026causalfairness,\n  title     = {Portable Causal Fairness Across Synthetic Data Generator Families},\n  author    = {Golob, Steven and Pentyala, Sikha and De Cock, Martine},\n  booktitle = {NeurIPS 2026 Workshop on Trustworthy AI for Good},\n  year      = {2026}\n}" },
+  { id: "idash", year: 2026, kind: "workshop",
+    title: "GPU-Accelerated Secure Inference for Drug–Target Interaction Prediction",
+    authors: "Sikha Pentyala, Steven Golob, Daniil Filienko, Ming-Chun Kao, Martine De Cock",
+    venue: "iDASH Privacy and Security Workshop 2026", short: "iDASH 2026", note: "Track III, first place",
+    url: "https://arxiv.org/abs/2611.25664",
+    links: { arXiv: "https://arxiv.org/abs/2611.25664", PDF: "https://arxiv.org/pdf/2611.25664" },
+    abstract: "Deep learning models that predict drug–target interactions (DTI) can speed up drug discovery, but the candidate drugs they score are valuable intellectual property that their owners cannot reveal. Secure multiparty computation (MPC) lets two servers compute a prediction on a secret-shared drug, without either server learning the drug. However, secure inference of deep models is slow. Non-linear operations require communication between the servers, and MPC arithmetic does not map naturally to GPUs. In this paper, we present our solution to Track III of the iDASH 2026 privacy and security competition, which asked for fast two-party secure DTI inference on GPUs. Our solution is built on the co-design of MPC-friendly models and MPC protocols. On the model side, we design SlimDTA, a DTI model that reduces the operations on the secret drug, and in particular the non-linear operations that require communication. On the protocol side, we build a GPU framework that evaluates the linear layers with additive secret sharing and the non-linear layers with function secret sharing, including a custom CUDA kernel for the comparisons. Our solution won first place in the competition, at under 10 ms per prediction on average, and its secure predictions match the plaintext model to within 0.02%.",
+    bib: "@inproceedings{pentyala2026idash,\n  title     = {{GPU}-Accelerated Secure Inference for Drug--Target Interaction Prediction},\n  author    = {Pentyala, Sikha and Golob, Steven and Filienko, Daniil and Kao, Ming-Chun and De Cock, Martine},\n  booktitle = {iDASH Privacy and Security Workshop},\n  year      = {2026},\n  note      = {arXiv:2611.25664}\n}" },
+  { id: "omics", year: 2026, kind: "journal",
+    title: "Community benchmarking of generative models for privacy-preserving synthetic bulk RNA-seq data generation",
+    authors: "Hakime Öztürk, Tejumade Afonja, Joonas Jälkö, Ruta Binkyte, Pablo Rodriguez-Mier, Sebastian Lobentanzer, Andrew Wicks, Jules Kreuer, Sofiane Ouaari, Nico Pfeifer, Shane Menzies†, Sikha Pentyala, Daniil Filienko, Steven Golob, et al.",
+    venue: "Genome Biology 27:355 (2026)", short: "Genome Biol. 2026",
+    url: "https://link.springer.com/article/10.1186/s13059-026-04326-1",
+    links: { Springer: "https://link.springer.com/article/10.1186/s13059-026-04326-1", DOI: "https://doi.org/10.1186/s13059-026-04326-1" },
+    bib: "@article{ozturk2026towards,\n  title   = {Community benchmarking of generative models for privacy-preserving synthetic bulk {RNA-seq} data generation},\n  author  = {{\\\"O}zt{\\\"u}rk, Hakime and Afonja, Tejumade and J{\\\"a}lk{\\\"o}, Joonas and others},\n  journal = {Genome Biology},\n  volume  = {27},\n  number  = {1},\n  eid     = {355},\n  year    = {2026},\n  doi     = {10.1186/s13059-026-04326-1}\n}" },
+  { id: "bulkcamda", year: 2026, kind: "workshop",
+    title: "Does Synthetic Bulk RNA-seq Data Protect Donors? Privacy Auditing through Membership Inference Attacks",
+    authors: "Charlene Jarrell†, Daniil Filienko, Jonathan Kim†, Emma Szebenyi†, Sikha Pentyala, Steven Golob, Martine De Cock",
+    venue: "34th Conference on Intelligent Systems for Molecular Biology (ISMB), CAMDA track", short: "ISMB 2026 · CAMDA", note: "Track I winner; best presentation",
+    url: "pdfs/CAMDA_Extended_Abstract_2026__Red_Team_Bulk.pdf",
+    links: { PDF: "pdfs/CAMDA_Extended_Abstract_2026__Red_Team_Bulk.pdf", Code: "https://github.com/steveng9/CAMDA-26-PPMLHuskies-RedTeam-bulkRNAseq" },
+    bib: "@inproceedings{bulkCAMDA,\n  title     = {Does Synthetic Bulk {RNA}-seq Data Protect Donors? {P}rivacy Auditing through Membership Inference Attacks},\n  author    = {Jarrell, Charlene and Filienko, Daniil and Kim, Jonathan and Szebenyi, Emma and Pentyala, Sikha and Golob, Steven and De Cock, Martine},\n  booktitle = {34th Conference on Intelligent Systems for Molecular Biology (ISMB), CAMDA Track},\n  year      = {2026}\n}" },
+  { id: "sccamda", year: 2026, kind: "workshop", first: true,
+    title: "Privacy Auditing of Synthetic Single-Cell RNA-seq Data",
+    authors: "Steven Golob, Patrick McKeever, Sikha Pentyala, Martine De Cock, Jonathan Peck",
+    venue: "34th Conference on Intelligent Systems for Molecular Biology (ISMB), CAMDA track", short: "ISMB 2026 · CAMDA", note: "Track II winner",
+    url: "pdfs/CAMDA_26__scMAMA_MIA_singlecell_track2.pdf",
+    links: { PDF: "pdfs/CAMDA_26__scMAMA_MIA_singlecell_track2.pdf" },
+    bib: "@inproceedings{golob2026CAMDA,\n  title     = {Privacy Auditing of Synthetic Single-Cell {RNA}-seq Data},\n  author    = {Golob, Steven and McKeever, Patrick and Pentyala, Sikha and De Cock, Martine and Peck, Jonathan},\n  booktitle = {34th Conference on Intelligent Systems for Molecular Biology (ISMB), CAMDA Track},\n  year      = {2026}\n}" },
+  { id: "chil", year: 2026, kind: "workshop", first: true,
+    title: "Privacy Vulnerabilities in Synthetic Single-Cell RNA-Sequence Data",
+    authors: "Steven Golob, Patrick McKeever, Sikha Pentyala, Martine De Cock, Jonathan Peck",
+    venue: "Doctoral Symposium, 7th Annual Conference on Health, Inference, and Learning (CHIL)", short: "CHIL 2026", note: "Poster",
+    bib: "@inproceedings{scmamamiaCHIL,\n  title     = {Privacy Vulnerabilities in Synthetic Single-Cell {RNA}-Sequence Data},\n  author    = {Golob, Steven and McKeever, Patrick and Pentyala, Sikha and De Cock, Martine and Peck, Jonathan},\n  booktitle = {Doctoral Symposium at the 7th Annual Conference on Health, Inference, and Learning},\n  year      = {2026}\n}" },
+  { id: "mamamia", year: 2025, kind: "conference", first: true, selected: true,
+    title: "Privacy Vulnerabilities in Marginals-based Synthetic Data",
+    authors: "Steven Golob, Sikha Pentyala, Anuar Maratkhan, Martine De Cock",
+    venue: "IEEE Conference on Secure and Trustworthy Machine Learning (SaTML)", short: "SaTML 2025", note: "Acceptance rate 29.4%",
+    url: "https://www.computer.org/csdl/proceedings-article/satml/2025/171100a977/26VnoYuA78Q",
+    links: { Paper: "https://www.computer.org/csdl/proceedings-article/satml/2025/171100a977/26VnoYuA78Q", arXiv: "https://arxiv.org/abs/2410.05506", Code: "https://github.com/steveng9/SyntheticData_MIA" },
+    tldr: "MAMA-MIA works out which statistics a differentially private generator measured, then checks which records those statistics favor. Against MST it matches the leading attack in 14 minutes instead of 1.78 days.",
+    stats: ["14 min vs 1.78 days", "1st, SNAKE 2023"],
+    abstract: "When acting as a privacy-enhancing technology, synthetic data generation (SDG) aims to maintain a resemblance to the real data while excluding personally-identifiable information. Many SDG algorithms provide robust differential privacy (DP) guarantees to this end. However, we show that the strongest class of SDG algorithms (those that preserve marginal probabilities, or similar statistics, from the underlying data) leak information about individuals that can be recovered more efficiently than previously understood. We demonstrate this by presenting a novel membership inference attack, MAMA-MIA, and evaluate it against three seminal DP SDG algorithms: MST, PrivBayes, and Private-GSD. MAMA-MIA leverages knowledge of which SDG algorithm was used, allowing it to learn information about the hidden data more accurately, and orders-of-magnitude faster, than other leading attacks. We use MAMA-MIA to lend insight into existing SDG vulnerabilities. Our approach went on to win the first SNAKE (SaNitization Algorithm under attacK ... ε) competition.",
+    bib: "@inproceedings{golob2025marginals,\n  title     = {Privacy Vulnerabilities in Marginals-based Synthetic Data},\n  author    = {Golob, Steven and Pentyala, Sikha and Maratkhan, Anuar and De Cock, Martine},\n  booktitle = {2025 IEEE Conference on Secure and Trustworthy Machine Learning (SaTML)},\n  pages     = {977--995},\n  year      = {2025}\n}" },
+  { id: "mckeever", year: 2025, kind: "workshop",
+    title: "Comparison of Single Cell RNA Synthetic Data Generators: a CAMDA Health Challenge Analysis",
+    authors: "Patrick McKeever, Daniil Filienko, Steven Golob, Shane Menzies†, Sikha Pentyala, Jineta Banerjee, Luca Foschini, Martine De Cock",
+    venue: "ISMB/ECCB 2025, CAMDA track", short: "ISMB/ECCB 2025",
+    url: "https://faculty.washington.edu/mdecock/papers/pmckeever2025a.pdf",
+    links: { PDF: "https://faculty.washington.edu/mdecock/papers/pmckeever2025a.pdf" },
+    bib: "@inproceedings{mckeever2025,\n  title     = {Comparison of Single Cell {RNA} Synthetic Data Generators: a {CAMDA} Health Challenge Analysis},\n  author    = {McKeever, Patrick and Filienko, Daniil and Golob, Steven and Menzies, Shane and Pentyala, Sikha and Banerjee, Jineta and Foschini, Luca and De Cock, Martine},\n  booktitle = {ISMB/ECCB 2025, CAMDA Track},\n  year      = {2025}\n}" },
+  { id: "menzies", year: 2025, kind: "workshop",
+    title: "Synthetic Data Generation for Bulk RNA-seq Data: a CAMDA Health Challenge Analysis",
+    authors: "Shane Menzies†, Sikha Pentyala, Daniil Filienko, Steven Golob, Jineta Banerjee, Luca Foschini, Martine De Cock",
+    venue: "ISMB/ECCB 2025, CAMDA track", short: "ISMB/ECCB 2025", note: "Track I winner",
+    url: "https://faculty.washington.edu/mdecock/papers/smenzies2025a.pdf",
+    links: { PDF: "https://faculty.washington.edu/mdecock/papers/smenzies2025a.pdf" },
+    bib: "@inproceedings{menzies2025,\n  title     = {Synthetic Data Generation for bulk {RNA}-seq Data: a {CAMDA} Health Challenge Analysis},\n  author    = {Menzies, Shane and Pentyala, Sikha and Filienko, Daniil and Golob, Steven and Banerjee, Jineta and Foschini, Luca and De Cock, Martine},\n  booktitle = {ISMB/ECCB 2025, CAMDA Track},\n  year      = {2025}\n}" },
+  { id: "vos", year: 2024, kind: "journal",
+    title: "Privacy-Preserving Membership Queries for Federated Anomaly Detection",
+    authors: "Jelle Vos, Sikha Pentyala, Steven Golob, Ricardo Maia, Dean Kelley, Zekeriya Erkin, Martine De Cock, Anderson Nascimento",
+    venue: "Proceedings on Privacy Enhancing Technologies (PoPETs), 2024(3), 186–201", short: "PoPETs 2024", note: "Acceptance rate 20%",
+    url: "https://petsymposium.org/popets/2024/popets-2024-0074.pdf",
+    links: { PDF: "https://petsymposium.org/popets/2024/popets-2024-0074.pdf", "PETs Prize code": "https://github.com/steveng9/PETsChallenge" },
+    bib: "@article{vos2024,\n  title   = {Privacy-preserving membership queries for federated anomaly detection},\n  author  = {Vos, Jelle and Pentyala, Sikha and Golob, Steven and Maia, Ricardo and Kelley, Dean and Erkin, Zekeriya and De Cock, Martine and Nascimento, Anderson},\n  journal = {Proceedings on Privacy Enhancing Technologies},\n  volume  = {2024},\n  number  = {3},\n  pages   = {186--201},\n  year    = {2024}\n}" },
+  { id: "aimahead", year: 2024, kind: "conference", first: true,
+    title: "Examining Health Equity Bias in Synthetic Data Generation Techniques",
+    authors: "Steven Golob",
+    venue: "Proceedings of the AI for Health Equity Symposium (AIM-AHEAD All of Us Training Program)", short: "AIHES 2024",
+    url: "pdfs/AIM_AHEAD_AllOfUs_Abstract_2024.pdf",
+    links: { PDF: "pdfs/AIM_AHEAD_AllOfUs_Abstract_2024.pdf" },
+    bib: "@inproceedings{aimahead2024golob,\n  author    = {Golob, Steven},\n  title     = {Examining Health Equity Bias in Synthetic Data Generation Techniques},\n  booktitle = {Proceedings of AI for Health Equity Symposium},\n  year      = {2024}\n}" },
+  { id: "thesis", year: 2024, kind: "thesis", first: true,
+    title: "Privacy Vulnerabilities in Marginals-based Synthetic Data",
+    authors: "Steven Golob",
+    venue: "Master’s thesis, University of Washington", short: "MSc thesis", note: "UW and WAGS/ProQuest Distinguished Thesis Awards",
+    url: "https://digital.lib.washington.edu/researchworks/items/d893d8a5-37b2-48e8-a821-522294c0f5dd",
+    links: { ResearchWorks: "https://digital.lib.washington.edu/researchworks/items/d893d8a5-37b2-48e8-a821-522294c0f5dd" },
+    bib: "@mastersthesis{golob2024thesis,\n  title  = {Privacy Vulnerabilities in Marginals-based Synthetic Data},\n  author = {Golob, Steven},\n  school = {University of Washington},\n  year   = {2024}\n}" },
+  { id: "genopri", year: 2024, kind: "workshop",
+    title: "Securely Generating Synthetic Genomic Data from Distributed Data Silos",
+    authors: "Trae Claar†, Steven Golob, Sikha Pentyala, Geetha Sitaraman, Martine De Cock, Jineta Banerjee, Luca Foschini",
+    venue: "11th International Workshop on Genome Privacy and Security (GenoPri’24)", short: "GenoPri 2024",
+    bib: "@inproceedings{claar2024genopriv,\n  author    = {Claar, Trae and Golob, Steven and Pentyala, Sikha and Sitaraman, Geetha and De Cock, Martine and Banerjee, Jineta and Foschini, Luca},\n  title     = {Securely Generating Synthetic Genomic Data from Distributed Data Silos},\n  booktitle = {11th International Workshop on Genome Privacy and Security (GenoPri'24)},\n  year      = {2024}\n}" },
+  { id: "ppai", year: 2024, kind: "workshop", first: true,
+    title: "High Epsilon Synthetic Data Vulnerabilities in MST and PrivBayes",
+    authors: "Steven Golob, Sikha Pentyala, Anuar Maratkhan, Martine De Cock",
+    venue: "AAAI-24 Workshop on Privacy-Preserving Artificial Intelligence (PPAI)", short: "PPAI @ AAAI 2024",
+    url: "https://arxiv.org/abs/2402.06699",
+    links: { arXiv: "https://arxiv.org/abs/2402.06699", Code: "https://github.com/steveng9/SyntheticData_MIA" },
+    abstract: "Synthetic data generation (SDG) has become increasingly popular as a privacy-enhancing technology. It aims to maintain important statistical properties of its underlying training data, while excluding any personally identifiable information. There have been a whole host of SDG algorithms developed in recent years to improve and balance both of these aims. Many of these algorithms provide robust differential privacy guarantees. However, we show here that if the differential privacy parameter ε is set too high, then unambiguous privacy leakage can result. We show this by conducting a novel membership inference attack (MIA) on two state-of-the-art differentially private SDG algorithms: MST and PrivBayes. Our work suggests that there are vulnerabilities in these generators not previously seen, and that future work to strengthen their privacy is advisable. We present the heuristic for our MIA here. It assumes knowledge of auxiliary “population” data, and also assumes knowledge of which SDG algorithm was used. We use this information to adapt the recent DOMIAS MIA uniquely to MST and PrivBayes. Our approach went on to win the SNAKE challenge in November 2023.",
+    bib: "@inproceedings{golob2024high,\n  title     = {High epsilon synthetic data vulnerabilities in {MST} and {PrivBayes}},\n  author    = {Golob, Steven and Pentyala, Sikha and Maratkhan, Anuar and De Cock, Martine},\n  booktitle = {AAAI-24 Workshop on Privacy-Preserving Artificial Intelligence},\n  year      = {2024}\n}" },
+  { id: "market", year: 2023, kind: "workshop", first: true,
+    title: "A Decentralized Information Marketplace Preserving Input and Output Privacy",
+    authors: "Steven Golob, Sikha Pentyala, Rafael Dowsley, Bernardo David, Mario Larangeira, Martine De Cock, Anderson Nascimento",
+    venue: "Second ACM Data Economy Workshop at SIGMOD, pp. 1–6", short: "DEC @ SIGMOD 2023",
+    url: "https://dl.acm.org/doi/10.1145/3600046.3600047",
+    links: { DOI: "https://dl.acm.org/doi/10.1145/3600046.3600047", Code: "https://github.com/steveng9/private_marketplace_prototype" },
+    bib: "@inproceedings{golob2023decentralized,\n  title     = {A decentralized information marketplace preserving input and output privacy},\n  author    = {Golob, Steven and Pentyala, Sikha and Dowsley, Rafael and David, Bernardo and Larangeira, Mario and De Cock, Martine and Nascimento, Anderson},\n  booktitle = {Proceedings of the Second ACM Data Economy Workshop at SIGMOD},\n  pages     = {1--6},\n  year      = {2023}\n}" },
+];
+
+const KIND = { journal: "Journal", conference: "Conference", workshop: "Workshop & abstract", preprint: "Preprint", thesis: "Thesis" };
+
+const COMPETITIONS = [
+  { year: "2026", win: true, title: "iDASH Privacy and Security Competition, Track III", result: "1st place", text: "Two-party secure inference of a drug–target interaction model on GPUs. Fastest of the four finalists on all three tests, at 8.1 to 9.2 ms per prediction.", url: "https://humangenomeprivacy.org/2026/competition-tasks.html" },
+  { year: "2026", win: true, title: "CAMDA Health Privacy Challenge", result: "Winner, both red-team tracks", text: "Track I, bulk RNA-seq (the undergraduate team I mentored), and Track II, single-cell RNA-seq (scMAMA-MIA).", url: "https://bipress.boku.ac.at/camda2026/the-camda-contest-challenges/" },
+  { year: "2025", win: true, title: "NIST Collaborative Research Cycle", result: "1st place, red team", text: "Reconstruction attacks on de-identified and synthetic tabular data. The entry grew into our PoPETs 2027 SoK.", url: "https://pages.nist.gov/privacy_collaborative_research_cycle/pages/red_team.html" },
+  { year: "2025", win: true, title: "CAMDA Health Privacy Challenge", result: "Winner, Track I", text: "Private and realistic synthetic bulk RNA-seq data. I presented our results at ISMB/ECCB 2025 in Liverpool.", url: "https://bipress.boku.ac.at/camda2025/the-camda-contest-challenges/" },
+  { year: "2023", win: true, title: "SNAKE (SaNitization Algorithm under attacK … ε)", result: "1st place", text: "Membership inference on differentially private synthetic data. The winning attack became MAMA-MIA (SaTML 2025).", url: "https://www.codabench.org/competitions/879/" },
+  { year: "2022", title: "US–UK PETs Prize Challenge", result: "2nd place", text: "Privacy-preserving federated learning to detect fraudulent transactions across banks and SWIFT data. Became a PoPETs 2024 paper.", url: "https://www.drivendata.org/competitions/group/nist-federated-learning/" },
+];
+
+const REPOS = [
+  { name: "SyntheticData_MIA", text: "MAMA-MIA, the winning SNAKE 2023 entry (SaTML 2025, PPAI 2024)." },
+  { name: "Reconstruction", text: "Reconstruction attacks and benchmark from the PoPETs 2027 SoK. Archived artifact: doi:10.5281/zenodo.22701232." },
+  { name: "scRNA-seq_privacy_audits", text: "scMAMA-MIA: membership inference on synthetic single-cell data (NeurIPS 2026)." },
+  { name: "CausalFairnessInSDG", text: "Causal fairness edge cuts across nine synthetic data generators." },
+  { name: "CAMDA-26-PPMLHuskies-RedTeam-bulkRNAseq", text: "The CAMDA 2026 Track I red-team attack, with the undergraduate team." },
+  { name: "PETsChallenge", text: "Our second-place US–UK PETs Prize solution." },
+];
+
+const AWARDS = [
+  ["2022–26", "Competition results (iDASH, CAMDA, NIST CRC, SNAKE, PETs Prize) are listed on the Research page"],
+  ["2026", "Carwein-Andrews Distinguished Fellowship, UW Tacoma (also 2022, 2023)"],
+  ["2026", "Outstanding Graduate Research Award, School of Engineering and Technology, UW Tacoma (also 2024, 2025)"],
+  ["2025", "WAGS/ProQuest Distinguished Thesis Award, Western Association of Graduate Schools"],
+  ["2025", "IEEE Graduate Research Travel Grant (visit to Ghent University and VIB)"],
+  ["2025", "Andrew and Julie Fry Innovation Award, UW Tacoma (also 2023)"],
+  ["2024", "Distinguished Thesis Award in Mathematics, Physical Sciences, and Engineering, University of Washington"],
+  ["2024", "Best Poster Award, SET Research Showcase, UW Tacoma"],
+  ["2024", "NIH AIM-AHEAD All of Us Training Program, trainee"],
+  ["2024", "PPAI Workshop travel award"],
+  ["2023", "Graduate Merit Scholarship, UW Tacoma"],
+  ["2022", "GSFEI Top Scholar Recruitment Fellowship, University of Washington"],
+  ["2021–26", "NSF CSGrad4US Fellowship, first cohort"],
+  ["2018–19", "Annual Dean’s List, UW Tacoma; 3rd place, Computational Worlds; ACM ICPC site winner (Div. 2)"],
+];
+
+// Photos. Put the image file in images/photos/ and add a line here.
+//   file:    the file name inside images/photos/
+//   caption: event, place, month and year
+//   alt:     what the photo shows, for screen readers
+//   where:   "home" puts it behind the name at the top of Home, where photos take
+//            turns; "research" or "teaching" puts it in a row on that page
+//            (the first four are shown)
+//   focus:   which part of the photo stays in view when it is cropped (CSS
+//            object-position). At the top of Home, put the x value on your face,
+//            since phones crop the sides; keep faces in the upper half, since the
+//            name and buttons sit over the lower part
+// With no photos for a place, that place does not appear at all.
+// TODO(Steven): check the captions marked "check" against your own records.
+const PHOTOS = [
+  { file: "campus-group-2025.jpg", caption: "With lab colleagues, UW Tacoma, April 2025 (check)",
+    alt: "Steven with two colleagues on a tree-lined campus walkway", where: ["home"], focus: "30% 22%" },
+  { file: "ismb-2025-talk.jpg", caption: "Presenting at ISMB/ECCB, Liverpool, July 2025",
+    alt: "Steven at a lectern on a stage with blue curtains", where: ["home"], focus: "84% 40%" },
+  { file: "discussion-2025.jpg", caption: "UW Tacoma, April 2025 (check)",
+    alt: "Steven listening intently at a table during a discussion", where: ["home"], focus: "30% 28%" },
+  { file: "binding-talk.jpg", caption: "Talk on predicting drug–target binding (check venue and date)",
+    alt: "Steven speaking beside a slide about drug and protein binding", where: ["home"], focus: "82% 55%" },
+  { file: "award-stage-2025.jpg", caption: "Award ceremony, School of Engineering and Technology, UW Tacoma, April 2025 (check)",
+    alt: "Steven on stage receiving an award", where: ["home"], focus: "50% 30%" },
+  { file: "data-economy-2023.jpg", caption: "SIGMOD Data Economy Workshop, Seattle, June 2023",
+    alt: "Steven with two colleagues beside a projected workshop slide", where: ["home"], focus: "36% 34%" },
+  { file: "pair-2024-poster.jpg", caption: "AIM-AHEAD PAIR program, Responsible Health AI Lab poster, August 2024",
+    alt: "Steven with two collaborators in front of a research poster", where: ["home"], focus: "44% 32%" },
+  { file: "research-award.jpg", caption: "Outstanding Graduate Research Award, School of Engineering and Technology, UW Tacoma (check year)",
+    alt: "Steven holding an award certificate beside a faculty member", where: ["home"], focus: "40% 22%" },
+  { file: "aaai-2024-sign.jpg", caption: "AAAI 2024, Vancouver, February 2024",
+    alt: "Steven with three colleagues in front of large AAAI letters", where: ["home"], focus: "30% 78%" },
+
+  { file: "aaai-2024-poster.jpg", caption: "Poster session, AAAI 2024, Vancouver, February 2024",
+    alt: "Steven smiling beside his poster on high-epsilon synthetic data vulnerabilities as others look on", where: ["research"] },
+  { file: "satml-2025-talk.jpg", caption: "Presenting at IEEE SaTML, Copenhagen, April 2025",
+    alt: "Steven at a lectern beside a projected title slide on privacy vulnerabilities in synthetic data", where: ["research"], focus: "50% 70%" },
+  { file: "satml-2025-poster.jpg", caption: "Poster at IEEE SaTML, Copenhagen, April 2025",
+    alt: "Steven standing beside a poster titled Privacy Vulnerabilities in Marginals-based Synthetic Data", where: ["research"], focus: "50% 35%" },
+  { file: "research-showcase-2024.jpg", caption: "Research Showcase, School of Engineering and Technology, UW Tacoma, March 2024",
+    alt: "Steven receiving a certificate in front of the Research Showcase schedule", where: ["research"], focus: "50% 62%" },
+
+  { file: "whiteboard.jpg", caption: "Working through an idea with a student (check)",
+    alt: "Steven explaining a sketch on a whiteboard to a student across a table", where: ["teaching"], focus: "70% 40%" },
+  { file: "tacoma-talk.jpg", caption: "Speaking with a view of Tacoma on the slide (check venue and date)",
+    alt: "Steven speaking at a lectern beside a projected aerial photo of Tacoma", where: ["teaching"] },
+  { file: "graduation-handshake.jpg", caption: "Graduation ceremony, University of Washington Tacoma (check year)",
+    alt: "Steven in academic regalia shaking hands on a stage", where: ["teaching"], focus: "50% 30%" },
+];
+
+const TALKS = [
+  ["2026", "Privacy auditing of synthetic single-cell RNA-seq data", "ISMB 2026, CAMDA track"],
+  ["2026", "Privacy vulnerabilities in synthetic single-cell RNA-seq data (poster)", "CHIL 2026 Doctoral Symposium"],
+  ["2025", "CAMDA Health Privacy Challenge results (invited)", "ISMB/ECCB 2025, Liverpool, UK"],
+  ["2025", "Privacy vulnerabilities in marginals-based synthetic data", "IEEE SaTML 2025, Copenhagen, Denmark"],
+  ["2024", "High epsilon synthetic data vulnerabilities in MST and PrivBayes", "PPAI Workshop at AAAI-24, Vancouver, Canada"],
+  ["2024", "Examining health equity bias in synthetic data generation (poster)", "AIM-AHEAD AIHES Annual Meeting, Atlanta, GA"],
+  ["2024", "Lightning talk and poster (Best Poster Award)", "SET Research Showcase, UW Tacoma"],
+  ["2023", "A decentralized information marketplace preserving input and output privacy", "Data Economy Workshop at SIGMOD 2023"],
+];
+
+/* ==================================================================
+   RENDERING
+   ================================================================== */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const ext = () => ' target="_blank" rel="noopener"';
+const fmtAuthors = a => esc(a).replace(/Steven Golob/g, "<b>Steven Golob</b>");
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+// View Transitions where supported; plain update otherwise.
+function vt(update, animate) {
+  if (!animate || reduced || document.hidden || !document.startViewTransition) { update(); return; }
+  const t = document.startViewTransition(update);
+  t.ready.catch(() => {}); t.finished.catch(() => {});
+}
+
+// toast + copy
+const toastEl = $("#toast"); let toastT;
+function toast(msg) { toastEl.textContent = msg; toastEl.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove("show"), 2200); }
+function copy(text, msg, fallbackHost) {
+  const fail = () => {
+    if (!fallbackHost) { toast(text); return; }
+    let box = fallbackHost.querySelector("textarea.copybox");
+    if (!box) { box = document.createElement("textarea"); box.className = "copybox"; box.readOnly = true; box.value = text; fallbackHost.appendChild(box); }
+    box.focus(); box.select(); toast("Selected. Press Ctrl+C or ⌘C to copy");
+  };
+  try { navigator.clipboard.writeText(text).then(() => toast(msg), fail); } catch (e) { fail(); }
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-copy]");
+  if (b) copy(b.dataset.copy, b.dataset.toast || "Copied", null);
+});
+
+// news
+function renderNews(all) {
+  const list = $("#news"), btn = $("#news-more");
+  const items = all ? NEWS : NEWS.slice(0, NEWS_SHOWN);
+  list.innerHTML = items.map(n => `<li><time>${esc(n.date)}</time><p>${n.tag ? `<span class="tag">${esc(n.tag)}</span>` : ""}${n.html}</p></li>`).join("");
+  const rest = NEWS.length - NEWS_SHOWN;
+  btn.hidden = rest <= 0;
+  btn.textContent = all ? "Show fewer" : `Show ${rest} earlier`;
+  btn.onclick = () => renderNews(!all);
+}
+
+function linkRow(p) {
+  return Object.entries(p.links || {}).map(([k, v]) => `<a href="${esc(v)}"${ext(v)}>${esc(k)}</a>`).join("");
+}
+
+// selected cards (home) and paper cards (research)
+function renderSelected() {
+  const sel = PUBS.filter(p => p.selected);
+  $("#selected").innerHTML = sel.map((p, i) => `
+    <article class="card" data-reveal style="--i:${i}">
+      <span class="venue">${esc(p.short)}</span>
+      <h3><a href="${esc(p.url)}"${ext(p.url)}>${esc(p.title)}</a></h3>
+      <p>${esc(p.tldr || "")}</p>
+      <div class="stats">${(p.stats || []).map(s => `<span class="stat">${esc(s)}</span>`).join("")}</div>
+      <div class="linkrow">${linkRow(p)}</div>
+    </article>`).join("");
+
+  const blurbs = {
+    mamamia: "Marginals-based generators (MST, PrivBayes, Private-GSD) produce some of the most accurate synthetic tables available, each with a differential privacy guarantee. They measure a handful of low-dimensional statistics of the real data, such as how often each combination of age and income occurs, add noise, and sample a table that matches them. MAMA-MIA starts from the observation that an attacker who knows the generator can work out which statistics it most likely measured: run it 50 times on auxiliary data and count what it picks. Each target is then scored by how much more common its values for those columns are in the synthetic data than in the auxiliary data. Against MST the attack takes 14 minutes and reaches AUC 0.61; the leading shadow-modelling attack, with 4,000 shadow datasets, takes 1.78 days to reach 0.60.",
+    sok: "A membership attack asks whether you were in the data. A reconstruction attack fills in your hidden values from a few public ones. We sorted the reconstruction attacks in the literature by the structure they exploit, added new ones where the taxonomy had gaps, and ran fourteen attacks against thirteen generators on five datasets. On a fixed release, switching attacks moves the risk a few points; switching generators moves it by tens. Differential privacy lowers reconstruction steadily up to ε≈10, then levels off at whatever the synthesizer can represent. The infrastructure came from our first-place NIST CRC 2025 entry.",
+    scmamamia: "Single-cell RNA-seq data has about 20,000 genes per cell, and attacks built for 15-column tables fall to chance on it. scMAMA-MIA reads the Gaussian copula that the generator scDesign2 fits and scores each donor’s cells by their Mahalanobis distance to it. It is the first attack that performs meaningfully above random guessing against state-of-the-art scRNA-seq generators, and it transfers to scDesign3 and scVI without knowing which generator was used. Adding noise to the copula as a defense brings AUC from 0.66 to near chance (0.54), at a cost in fidelity. The work started during my visit to Ghent University and VIB with Jonathan Peck.",
+  };
+  const order = ["mamamia", "sok", "scmamamia"];
+  $("#thread-safe").innerHTML = order.map(id => {
+    const p = PUBS.find(x => x.id === id);
+    return `<article class="paper">
+      <span class="venue">${esc(p.short)}</span>
+      <h3>${esc(p.title)}</h3>
+      <p>${esc(blurbs[id])}</p>
+      <div class="stats">${(p.stats || []).map(s => `<span class="stat">${esc(s)}</span>`).join("")}</div>
+      <div class="linkrow">${linkRow(p)}</div>
+    </article>`;
+  }).join("");
+}
+
+// spotlight hover on cards
+document.addEventListener("pointermove", e => {
+  const c = e.target.closest && e.target.closest(".card");
+  if (!c) return;
+  const r = c.getBoundingClientRect();
+  c.style.setProperty("--mx", `${e.clientX - r.left}px`);
+  c.style.setProperty("--my", `${e.clientY - r.top}px`);
+});
+
+// competitions, repos, awards, talks
+function renderLists() {
+  $("#timeline").innerHTML = COMPETITIONS.map((c, i) => `
+    <li class="${c.win ? "win" : ""}" data-reveal style="--i:${i % 4}"><time>${c.year}</time><div>
+      <h3>${c.url ? `<a href="${esc(c.url)}"${ext(c.url)} style="color:inherit;text-decoration:none">${esc(c.title)}</a>` : esc(c.title)}</h3>
+      <div class="result">${esc(c.result)}</div><p>${esc(c.text)}</p></div></li>`).join("");
+  $("#repos").innerHTML = REPOS.map(r => `<a class="repo" href="https://github.com/steveng9/${r.name}" target="_blank" rel="noopener"><b>${esc(r.name)}</b><span>${esc(r.text)}</span></a>`).join("");
+  $("#awards").innerHTML = AWARDS.map(([y, t]) => `<li><span class="when">${y}</span><span class="what"><b>${esc(t)}</b></span></li>`).join("");
+  $("#talks").innerHTML = TALKS.map(([y, t, v]) => `<li><span class="when">${y}</span><span class="what"><b>${esc(t)}</b><span>${esc(v)}</span></span></li>`).join("");
+}
+
+// publications: filter + search
+let pubFilter = "all";
+function renderChips() {
+  const counts = { all: PUBS.length, first: PUBS.filter(p => p.first).length };
+  for (const k of Object.keys(KIND)) counts[k] = PUBS.filter(p => p.kind === k).length;
+  const defs = [["all", "All"], ["first", "First-author"], ...Object.entries(KIND)];
+  $("#chips").innerHTML = defs.filter(([k]) => counts[k]).map(([k, l]) =>
+    `<button class="chip" type="button" data-f="${k}" aria-pressed="${k === pubFilter}">${esc(l)}<span class="n">${counts[k]}</span></button>`).join("");
+}
+function renderPubs() {
+  const q = $("#q").value.trim().toLowerCase();
+  const list = PUBS.filter(p => (pubFilter === "all" || (pubFilter === "first" ? p.first : p.kind === pubFilter)) &&
+    (!q || [p.title, p.authors, p.venue, p.short, p.note || ""].join(" ").toLowerCase().includes(q)));
+  $("#count").textContent = `${list.length} of ${PUBS.length}`;
+  if (!list.length) { $("#pub-list").innerHTML = `<p class="empty">No papers match “${esc(q)}”. Try a venue (NeurIPS), a topic (single-cell), or a co-author.</p>`; return; }
+  const years = [...new Set(list.map(p => p.year))];
+  $("#pub-list").innerHTML = years.map(y => `
+    <section class="year-group"><h2>${y}</h2><ol class="pubs">${list.filter(p => p.year === y).map(p => `
+      <li class="pub" id="pub-${p.id}">
+        <div class="pub-title">${p.url ? `<a href="${esc(p.url)}"${ext(p.url)}>${esc(p.title)}</a>` : esc(p.title)}</div>
+        <div class="pub-authors">${fmtAuthors(p.authors)}</div>
+        <div class="pub-meta"><em>${esc(p.venue)}</em><span class="kind ${p.kind}">${esc(KIND[p.kind])}</span>${p.note ? `<span>· ${esc(p.note)}</span>` : ""}</div>
+        <div class="pub-actions">
+          ${p.abstract ? `<button class="pill" type="button" data-abs="abs-${p.id}" aria-expanded="false" aria-controls="abs-${p.id}">Abstract</button>` : ""}
+          ${Object.entries(p.links || {}).map(([k, v]) => `<a class="pill" href="${esc(v)}"${ext(v)}>${esc(k)}</a>`).join("")}
+          ${p.bib ? `<button class="pill" type="button" data-bib="${p.id}"><svg width="13" height="13"><use href="#i-copy"/></svg>BibTeX</button>` : ""}
         </div>
-    </section>
+        ${p.abstract ? `<div class="abs-wrap" id="abs-${p.id}" inert><div><p class="abs-text">${esc(p.abstract)}</p></div></div>` : ""}
+      </li>`).join("")}</ol></section>`).join("");
+}
+$("#chips").addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if (!b) return;
+  pubFilter = b.dataset.f; $$(".chip").forEach(c => c.setAttribute("aria-pressed", c === b)); renderPubs();
+});
+$("#q").addEventListener("input", renderPubs);
+new ResizeObserver(([e]) => document.documentElement.style.setProperty("--pub-tools-h", e.borderBoxSize[0].blockSize + "px")).observe($(".pub-tools"));
+$("#pub-list").addEventListener("click", e => {
+  const a = e.target.closest("[data-abs]");
+  if (a) {
+    const w = $("#" + a.dataset.abs), open = !w.classList.contains("open");
+    w.classList.toggle("open", open); w.inert = !open; a.setAttribute("aria-expanded", open); return;
+  }
+  const b = e.target.closest("[data-bib]"); if (!b) return;
+  const p = PUBS.find(x => x.id === b.dataset.bib);
+  copy(p.bib, "BibTeX copied", b.closest(".pub"));
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && !/input|textarea/i.test(document.activeElement.tagName)) {
+    e.preventDefault(); if (current !== "publications") location.hash = "publications";
+    setTimeout(() => $("#q").focus(), 60);
+  }
+});
 
-    <!-- Service Section -->
-    <section id="service" class="section">
-        <div class="container">
-            <h2 class="section-title">Service</h2>
-            <div class="section-subtitle">Academic and community service</div>
-            <div id="service-grid" class="service-list">
-                <!-- Service items will be populated by JavaScript -->
-            </div>
-        </div>
-    </section>
+// bar chart: TabDDPM by race (PoPETs 2027, Table 7)
+const RACE = [
+  { g: "Amer. Indian / Alaska Native", share: "1.1%", v: 8.4, em: true },
+  { g: "Asian / Pacific Islander", share: "3.1%", v: 3.9 },
+  { g: "Black", share: "9.9%", v: 1.9 },
+  { g: "White", share: "85.3%", v: 1.2 },
+  { g: "Other", share: "0.7%", v: 0.9 },
+];
+function renderChart() {
+  const max = 13, mean = 1.4;
+  const bars = $("#bars");
+  bars.style.setProperty("--m", mean / max);
+  bars.innerHTML = RACE.map(r => `<div class="bar-row" data-tip="${esc(r.g)}: ${r.v}% (${r.share} of the data)">
+      <span class="lbl">${esc(r.g)} <small>${r.share}</small></span>
+      <span class="bar-track"><span class="bar${r.em ? " em" : ""}" style="--w:${r.v / max * 100}%"></span><span class="bar-val" style="--w:${r.v / max * 100}%">${r.v.toFixed(1)}%</span></span>
+    </div>`).join("") + `<span class="mean-line" aria-hidden="true"></span><span class="mean-tag">mean, everyone: ${mean}%</span>`;
+  const chart = $("#chart"); let tip;
+  chart.style.position = "relative";
+  bars.addEventListener("pointermove", e => {
+    const row = e.target.closest("[data-tip]");
+    if (!row) { tip && tip.remove(); tip = null; return; }
+    if (!tip) { tip = document.createElement("div"); tip.className = "tip"; chart.appendChild(tip); }
+    tip.textContent = row.dataset.tip;
+    const r = chart.getBoundingClientRect();
+    tip.style.left = `${Math.min(Math.max(e.clientX - r.left, 110), r.width - 110)}px`;
+    tip.style.top = `${e.clientY - r.top - 8}px`;
+  });
+  bars.addEventListener("pointerleave", () => { tip && tip.remove(); tip = null; });
+  new IntersectionObserver((es, o) => es.forEach(en => { if (en.isIntersecting) { chart.classList.add("in"); o.disconnect(); } }), { threshold: .3 }).observe(chart);
+}
 
-    <!-- Awards Section -->
-    <section id="awards" class="section section-alt">
-        <div class="container">
-            <h2 class="section-title">Awards</h2>
-            <div class="section-subtitle">Recognition and honors</div>
-            <div id="awards-grid" class="awards-list">
-                <!-- Awards will be populated by JavaScript -->
-            </div>
-        </div>
-    </section>
+/* ==================================================================
+   FIG. 1: the field. Records in two dense clusters and a thin branch.
+   A probe counts neighbors within a radius; on the branch it finds one.
+   ================================================================== */
+function field() {
+  const cv = $("#field"), ctx = cv.getContext("2d");
+  let W = 0, H = 0, dpr = 1, colors = {}, pts = [], probe = { x: .3, y: .5 }, target = null, t0 = performance.now(), raf, visible = true;
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const gauss = () => { let u = 0, v = 0; while (!u) u = rnd(); while (!v) v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+  for (let i = 0; i < 190; i++) pts.push({ x: .26 + gauss() * .075, y: .52 + gauss() * .13 });
+  for (let i = 0; i < 120; i++) pts.push({ x: .5 + gauss() * .06, y: .42 + gauss() * .11 });
+  for (let i = 0; i < 14; i++) { const s = i / 14; pts.push({ x: .58 + s * .2 + gauss() * .012, y: .46 - s * .17 + gauss() * .02 }); }
+  const lone = { x: .93, y: .14, lone: true }; pts.push(lone);
+  pts.forEach(p => { p.ph = rnd() * 6.28; p.sp = .4 + rnd() * .6; });
 
-    <!-- About Section -->
-    <section id="about" class="section">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-text">
-                    <h2 class="section-title">About Me</h2>
-                    <p id="bio-text" class="bio-text">
-                        <!-- Bio will be populated by JavaScript -->
-                    </p>
-                </div>
-                <div class="about-image">
-                    <div class="image-container">
-                        <img src="./images/golob_profile_photo.jpg" alt="Steven Golob" class="profile-image">
-                        <div class="image-overlay"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+  function readColors() {
+    const cs = getComputedStyle(document.documentElement);
+    colors = { dot: cs.getPropertyValue("--dot").trim(), ink: cs.getPropertyValue("--ink").trim(), muted: cs.getPropertyValue("--muted").trim(),
+      dusk: cs.getPropertyValue("--dusk").trim(), violet: cs.getPropertyValue("--violet").trim(), indigo: cs.getPropertyValue("--indigo").trim(), surface: cs.getPropertyValue("--surface").trim() };
+  }
+  function size() {
+    const r = cv.getBoundingClientRect(); dpr = Math.min(devicePixelRatio || 1, 2);
+    W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  // auto path: cluster A -> cluster B -> branch -> lone record, then back
+  const tour = [{ x: .26, y: .55 }, { x: .5, y: .4 }, { x: .7, y: .33 }, { x: .93, y: .14 }, { x: .93, y: .14 }, { x: .4, y: .6 }];
+  function autoPos(t) {
+    const seg = 3.2, n = tour.length, k = (t / seg) % n, i = Math.floor(k), f = k - i;
+    const a = tour[i], b = tour[(i + 1) % n], e = f < .5 ? 4 * f * f * f : 1 - Math.pow(-2 * f + 2, 3) / 2;
+    return { x: a.x + (b.x - a.x) * e, y: a.y + (b.y - a.y) * e };
+  }
+  function draw(now) {
+    const t = Math.max(0, (now - t0) / 1000); // the first frame can be stamped just before t0
+    if (!target) { const a = reduced ? lone : autoPos(t); probe.x += (a.x - probe.x) * (reduced ? 1 : .08); probe.y += (a.y - probe.y) * (reduced ? 1 : .08); }
+    else { probe.x += (target.x - probe.x) * .25; probe.y += (target.y - probe.y) * .25; }
+    ctx.clearRect(0, 0, W, H);
+    const R = Math.max(34, Math.min(W, H) * .13), px = probe.x * W, py = probe.y * H;
+    let k = 0;
+    const jit = reduced ? 0 : 1;
+    for (const p of pts) {
+      const x = p.x * W + Math.sin(t * p.sp + p.ph) * 2.2 * jit, y = p.y * H + Math.cos(t * p.sp * .8 + p.ph) * 2.2 * jit;
+      const inside = (x - px) ** 2 + (y - py) ** 2 < R * R; if (inside) k++;
+      if (p.lone) {
+        const pulse = reduced ? 0 : (Math.sin(t * 2.4) + 1) / 2;
+        ctx.beginPath(); ctx.arc(x, y, 12 + pulse * 6, 0, 7); ctx.strokeStyle = colors.violet; ctx.globalAlpha = .35 - pulse * .2; ctx.lineWidth = 1.5; ctx.stroke(); ctx.globalAlpha = 1;
+        ctx.beginPath(); ctx.arc(x, y, 6.5, 0, 7); ctx.fillStyle = colors.dusk; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = colors.violet; ctx.stroke();
+        ctx.font = "600 12px Inconsolata, ui-monospace, monospace"; ctx.fillStyle = colors.muted; ctx.textAlign = "right";
+        ctx.fillText("a rare record", x - 14, y + 26);
+      } else {
+        ctx.beginPath(); ctx.arc(x, y, inside ? 3.6 : 2.6, 0, 7);
+        ctx.fillStyle = inside ? colors.indigo : colors.dot; ctx.globalAlpha = inside ? .95 : .55; ctx.fill(); ctx.globalAlpha = 1;
+      }
+    }
+    // probe ring + label
+    ctx.beginPath(); ctx.arc(px, py, R, 0, 7); ctx.setLineDash([5, 5]); ctx.lineDashOffset = reduced ? 0 : -t * 12;
+    ctx.strokeStyle = colors.ink; ctx.globalAlpha = .55; ctx.lineWidth = 1.25; ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+    const label = k === 1 ? "k = 1 · identifiable" : `k = ${k} lookalikes`;
+    ctx.font = "700 13px Inconsolata, ui-monospace, monospace"; const tw = ctx.measureText(label).width;
+    let lx = px + R * .72, ly = py - R * .72 - 8; lx = Math.min(Math.max(lx, 8), W - tw - 20); ly = Math.max(ly, 22);
+    ctx.fillStyle = k === 1 ? colors.dusk : colors.surface; ctx.strokeStyle = k === 1 ? colors.violet : colors.ink;
+    ctx.globalAlpha = .96; roundRect(lx - 8, ly - 15, tw + 16, 24, 7); ctx.fill(); ctx.globalAlpha = .25; ctx.stroke(); ctx.globalAlpha = 1;
+    ctx.fillStyle = k === 1 ? "#1c1a36" : colors.ink; ctx.textAlign = "left"; ctx.fillText(label, lx, ly + 2);
+    if (!reduced && visible) raf = requestAnimationFrame(draw);
+  }
+  function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+  cv.addEventListener("pointermove", e => { const r = cv.getBoundingClientRect(); target = { x: (e.clientX - r.left) / W, y: (e.clientY - r.top) / H }; if (reduced) draw(performance.now()); });
+  cv.addEventListener("pointerleave", () => { target = null; if (reduced) draw(performance.now()); });
+  new ResizeObserver(() => { size(); if (reduced || !visible) draw(performance.now()); }).observe(cv);
+  new IntersectionObserver(es => { const v = es[0].isIntersecting; if (v && !visible && !reduced) { visible = true; raf = requestAnimationFrame(draw); } visible = v; }).observe(cv);
+  readColors(); size();
+  if (reduced) draw(performance.now()); else raf = requestAnimationFrame(draw);
+  return { recolor() { readColors(); if (reduced) draw(performance.now()); } };
+}
 
-    <!-- Contact Section -->
-    <section id="contact" class="section contact-section">
-        <div class="container">
-            <h2 class="section-title">Contact</h2>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <a href="mailto:golobs@uw.edu" id="email-link">golobs@uw.edu</a>
-                    </div>
-                    <div class="social-links">
-                        <a href="#" id="github-link" target="_blank" rel="noopener">
-                            <i class="fab fa-github"></i>
-                        </a>
-                        <a href="#" id="linkedin-link" target="_blank" rel="noopener">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+/* ==================================================================
+   PHOTOS: rendered from the PHOTOS list into every [data-photos] container.
+   ================================================================== */
+// captions keep their "(check ...)" notes in the list above, but the page leaves them out
+const capText = c => (c || "").replace(/\s*\(check[^)]*\)/g, "");
+function renderPhotos() {
+  const depths = [0.05, -0.06, 0.08, -0.04];
+  $$(".photo-trio[data-photos]").forEach(box => {
+    const list = PHOTOS.filter(ph => (ph.where || []).includes(box.dataset.photos)).slice(0, 4);
+    box.hidden = !list.length;
+    box.innerHTML = list.map((ph, i) => `<figure class="shot" data-parallax="${depths[i % 4]}" data-reveal style="--i:${i}">
+        <img src="images/photos/${esc(ph.file)}" alt="${esc(ph.alt || "")}" style="object-position:${esc(ph.focus || "50% 50%")}" loading="lazy" decoding="async">
+        ${capText(ph.caption) ? `<figcaption>${esc(capText(ph.caption))}</figcaption>` : ""}</figure>`).join("");
+  });
+}
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 Steven Golob. All rights reserved.</p>
-        </div>
-    </footer>
+/* Photos behind the name on Home. Every few seconds the next one sweeps in over
+   the last, and each drifts slowly in its own direction while it is up. Nothing
+   stops it but the page being out of sight (scrolled away or tab hidden). With
+   reduced motion it shows the first photo, still. Each photo is fetched only
+   just before its turn. */
+function renderStage() {
+  const box = $("#stage"), cap = $("#stage-cap");
+  const list = PHOTOS.filter(ph => (ph.where || []).includes("home"));
+  if (!list.length) return;
+  // x0 y0 scale0 -> x1 y1 scale1 (translate in % of the photo): small, slow moves
+  const MOVES = [[1.5, 0, 1.07, -1.5, 0, 1.07], [-1.2, 1, 1.06, 1.2, -1, 1.1], [0, 0, 1.05, 0, 0, 1.11],
+                 [0, 1.4, 1.08, 0, -1.4, 1.08], [1.4, -1, 1.09, -1.4, 1, 1.09], [0, 0, 1.11, 0, 0, 1.05]];
+  box.innerHTML = list.map((ph, i) => {
+    const m = MOVES[i % MOVES.length];
+    const vars = ["--x0", "--y0", "--s0", "--x1", "--y1", "--s1"].map((k, j) => `${k}:${j % 3 === 2 ? m[j] : m[j] + "%"}`).join(";");
+    return `<figure class="slide" style="--focus:${esc(ph.focus || "50% 35%")};${vars}"><img data-src="images/photos/${esc(ph.file)}" alt="" decoding="async"></figure>`;
+  }).join("");
+  const els = $$(".slide", box);
+  const load = i => { const img = $("img", els[i % els.length]); if (!img.src) img.src = img.dataset.src; };
+  $("img", els[0]).fetchPriority = "high";
+  load(0);
+  const DWELL = 4500;
+  let idx = -1, timer = 0, seen = true;
+  function go(n) {
+    const prev = els[idx];
+    if (prev) { prev.classList.remove("on"); prev.classList.add("out"); setTimeout(() => prev.classList.remove("out"), 950); }
+    idx = n; els[n].classList.remove("out"); els[n].classList.add("on");
+    load(n + 1);
+    const text = capText(list[n].caption);
+    if (!cap.textContent) cap.textContent = text;
+    else { cap.classList.add("swap"); setTimeout(() => { cap.textContent = text; cap.classList.remove("swap"); }, 350); }
+  }
+  function tick() {
+    clearTimeout(timer);
+    if (reduced || list.length < 2 || !seen || document.hidden) return;
+    timer = setTimeout(() => { go((idx + 1) % list.length); tick(); }, DWELL);
+  }
+  document.addEventListener("visibilitychange", tick);
+  if ("IntersectionObserver" in window) new IntersectionObserver(en => { seen = en[0].isIntersecting; tick(); }).observe(box.parentElement.parentElement);
+  go(0); tick();
+}
 
-    <!-- Back to top button -->
-    <button id="back-to-top" class="back-to-top" title="Back to top">
-        <i class="fas fa-arrow-up"></i>
-    </button>
+/* ==================================================================
+   MOTION: reveal on scroll, parallax, sideways drift, reading progress.
+   Adapted from the scroll code of the research group site.
+   ================================================================== */
+function motion() {
+  const bar = $("#progress"); let movers = [], queued = false;
+  const io = reduced || !("IntersectionObserver" in window) ? null : new IntersectionObserver(entries => {
+    for (const en of entries) {
+      if (!en.isIntersecting) continue;
+      const el = en.target; el.classList.add("is-in"); io.unobserve(el);
+      // once it has arrived, hand the element back to its own hover transitions
+      setTimeout(() => el.removeAttribute("data-reveal"), 1300);
+    }
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+  function update() {
+    queued = false;
+    const vh = innerHeight, max = document.documentElement.scrollHeight - vh;
+    bar.style.setProperty("--p", max > 0 ? Math.min(1, scrollY / max).toFixed(4) : 0);
+    if (reduced) return;
+    for (const m of movers) {
+      const b = m.anchor.getBoundingClientRect();
+      if ((!b.width && !b.height) || b.bottom < -200 || b.top > vh + 200) continue;
+      // how far the anchor's centre is from the middle of the screen
+      const off = b.top + b.height / 2 - vh / 2;
+      if (m.p) m.el.style.setProperty("--move-y", `${(off * m.p).toFixed(1)}px`);
+      if (m.d) m.el.style.setProperty("--move-x", `${(off * m.d).toFixed(1)}px`);
+    }
+  }
+  const request = () => { if (!queued) { queued = true; requestAnimationFrame(update); } };
+  // on a mouse or trackpad, layers inside [data-lean] (hero photos, the portrait)
+  // shift a few pixels with the pointer, each by its own amount, for depth
+  if (!reduced && matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    $$("[data-lean]").forEach(el => {
+      const lean = (x, y) => { el.style.setProperty("--tx", x.toFixed(3)); el.style.setProperty("--ty", y.toFixed(3)); };
+      el.addEventListener("pointermove", e => {
+        const r = el.getBoundingClientRect();
+        lean(((e.clientX - r.left) / r.width) * 2 - 1, ((e.clientY - r.top) / r.height) * 2 - 1);
+      });
+      el.addEventListener("pointerleave", () => lean(0, 0));
+    });
+  }
+  addEventListener("scroll", request, { passive: true });
+  addEventListener("resize", request);
+  return {
+    // call after content is rendered and after every tab change
+    refresh() {
+      movers = $$("[data-parallax], [data-drift]").map(el => ({ el, p: +el.dataset.parallax || 0, d: +el.dataset.drift || 0,
+        anchor: el.closest("[data-motion-anchor]") || el.parentElement || el }));
+      $$("[data-reveal]:not(.is-in)").forEach(el => io ? io.observe(el) : el.classList.add("is-in"));
+      request();
+    },
+  };
+}
 
-    <script src="script.js"></script>
+/* ==================================================================
+   TOYS: one small animation per research thread, in the thread's header.
+   Click one to open it large, with controls, in the toy dialog.
+   Each toy is a scene. make(S, a, b) returns
+     { step(dt, S), draw(ctx, S), click?(x, y, S), controls?: [...], read?() }
+   where S holds the canvas size (w, h), the clock (t), the pointer, and
+   `big` (true in the dialog). Every toy draws in its own two colors, a and b.
+   ================================================================== */
+const TAU = Math.PI * 2;
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+function rng(seed) {
+  let s = seed;
+  const next = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  const gauss = () => { let u = 0, v = 0; while (!u) u = next(); while (!v) v = next(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(TAU * v); };
+  return { next, gauss };
+}
+let INK = {};
+function readInk() {
+  const cs = getComputedStyle(document.documentElement), g = k => cs.getPropertyValue(k).trim();
+  INK = { ink: g("--ink"), ink2: g("--ink-2"), muted: g("--muted"), line: g("--line"), surface: g("--surface"), bg: g("--bg"), dot: g("--dot"), violet: g("--violet"), indigo: g("--indigo") };
+}
+const mono = (px, w = 600) => `${w} ${px}px Inconsolata, ui-monospace, Menlo, monospace`;
+function dot(ctx, x, y, r, color, a = 1) { ctx.globalAlpha = a; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fillStyle = color; ctx.fill(); ctx.globalAlpha = 1; }
+function ring(ctx, x, y, r, color, a = 1, lw = 1.2) { ctx.globalAlpha = a; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.stroke(); ctx.globalAlpha = 1; }
+function seg(ctx, x1, y1, x2, y2, color, a = 1, lw = 1, dash) {
+  ctx.globalAlpha = a; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.strokeStyle = color; ctx.lineWidth = lw;
+  if (dash) ctx.setLineDash(dash); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+}
+function label(ctx, s, x, y, color, px = 11, align = "left", w = 600) { ctx.font = mono(px, w); ctx.fillStyle = color; ctx.textAlign = align; ctx.textBaseline = "middle"; ctx.fillText(s, x, y); }
+function pill(ctx, s, x, y, fg, bg, px = 11, align = "center") {
+  ctx.font = mono(px, 700); const tw = ctx.measureText(s).width, h = px + 9, w = tw + 14;
+  const left = align === "center" ? x - w / 2 : align === "right" ? x - w : x;
+  ctx.fillStyle = bg; ctx.beginPath(); ctx.roundRect(left, y - h / 2, w, h, h / 2); ctx.fill();
+  label(ctx, s, left + w / 2, y + .5, fg, px, "center", 700);
+}
+// map [0,1] coordinates into the canvas with a margin, and back
+function frame(S, pad = .08) {
+  const px = S.w * pad, py = S.h * pad, iw = S.w - 2 * px, ih = S.h - 2 * py;
+  return { X: v => px + v * iw, Y: v => py + v * ih, ix: x => (x - px) / iw, iy: y => (y - py) / ih };
+}
+
+const TOYS = {
+  /* Thread 1: is the release safe? Real records and their noisy synthetic copies. */
+  safe: {
+    tag: "Toy 1 · membership", title: "Traceable copies", a: "#5b6cf0", b: "#f2624b", warm: 2,
+    cap: "Each ring is a real person’s record, and each dot is the synthetic record a toy generator made from it by adding noise. A dot turns coral, with a thread back to its source, when the nearest real record is still the one it came from, so anyone holding the release could trace it. Turn the noise up and the dense clusters stop being traceable first, while the lone record at the top right stays traceable long after the shape of the data has blurred. Real generators don’t work point by point, which is why their leaks have to be measured with attacks. (Adapted from a figure I made for the NAIRR Pilot project site.)",
+    hint: "Drag the slider, or hover a dot to see where it came from.",
+    make(S, A, B) {
+      const R = rng(23), raw = [];
+      for (let i = 0; i < 34; i++) raw.push([.27 + R.gauss() * .07, .64 + R.gauss() * .1]);
+      for (let i = 0; i < 24; i++) raw.push([.57 + R.gauss() * .055, .47 + R.gauss() * .08]);
+      for (let i = 0; i < 7; i++) raw.push([.66 + i * .025 + R.gauss() * .006, .36 - i * .024 + R.gauss() * .008]);
+      raw.push([.9, .17]);
+      const donors = raw.map(([x, y]) => ({ x: clamp(x, .03, .97), y: clamp(y, .04, .96), nx: R.gauss(), ny: R.gauss() }));
+      const hist = list => { const b = new Array(30).fill(0); for (const p of list) b[clamp(Math.floor(p.y * 5), 0, 4) * 6 + clamp(Math.floor(p.x * 6), 0, 5)] += 1 / list.length; return b; };
+      const realH = hist(donors);
+      let noise = .3, manual = false, synth = [], traced = [], share = 0, fid = 1;
+      function compute() {
+        const sg = .22 * Math.pow(noise, 1.6);
+        synth = donors.map(d => ({ x: clamp(d.x + d.nx * sg, .01, .99), y: clamp(d.y + d.ny * sg, .01, .99) }));
+        traced = synth.map((s, i) => {
+          let best = 0, bd = Infinity;
+          donors.forEach((d, j) => { const q = (d.x - s.x) ** 2 + (d.y - s.y) ** 2; if (q < bd) { bd = q; best = j; } });
+          return best === i;
+        });
+        share = traced.filter(Boolean).length / traced.length;
+        const sh = hist(synth); fid = 1 - realH.reduce((a, v, i) => a + Math.abs(v - sh[i]), 0) / 2;
+      }
+      compute();
+      return {
+        step(dt, S) { if (!manual) { noise = .42 - .4 * Math.cos(S.t * .5); compute(); } },
+        draw(ctx, S) {
+          const big = S.big, k = big ? 1.45 : 1, { X, Y } = frame(S, big ? .07 : .09);
+          let hov = -1;
+          if (big && S.ptr.in) { let bd = 18 * 18; synth.forEach((s, i) => { const q = (X(s.x) - S.ptr.x) ** 2 + (Y(s.y) - S.ptr.y) ** 2; if (q < bd) { bd = q; hov = i; } }); }
+          donors.forEach(d => ring(ctx, X(d.x), Y(d.y), 3.3 * k, A, .45, 1.1));
+          synth.forEach((s, i) => { if (traced[i]) { const d = donors[i]; seg(ctx, X(s.x), Y(s.y), X(d.x), Y(d.y), B, .5, 1); } });
+          synth.forEach((s, i) => dot(ctx, X(s.x), Y(s.y), (i === hov ? 4.6 : 2.5) * k, traced[i] ? B : A, traced[i] ? 1 : .85));
+          if (hov >= 0) {
+            const s = synth[hov], d = donors[hov];
+            seg(ctx, X(s.x), Y(s.y), X(d.x), Y(d.y), INK.ink, .7, 1.2, [4, 4]);
+            ring(ctx, X(d.x), Y(d.y), 8, INK.ink, .7);
+            pill(ctx, traced[hov] ? "traceable: its nearest real record is its source" : "hidden: another real record is closer", clamp(X(s.x), 170, S.w - 170), Y(s.y) - 20, "#fff", traced[hov] ? B : A, 12);
+          }
+          const y = S.h - (big ? 22 : 14), x0 = big ? 20 : 11, w = big ? 150 : 56, px = big ? 13 : 10;
+          label(ctx, "noise", x0, y, INK.muted, px);
+          const tx = x0 + (big ? 50 : 36);
+          seg(ctx, tx, y, tx + w, y, INK.line, 1, big ? 5 : 4); seg(ctx, tx, y, tx + w * noise, y, A, 1, big ? 5 : 4);
+          label(ctx, `traceable ${Math.round(share * 100)}%`, S.w - x0, y, B, px, "right", 700);
+        },
+        controls: [{ type: "range", label: "Noise added by the generator", min: 0, max: 100, get: () => Math.round(noise * 100), set: v => { manual = true; noise = v / 100; compute(); } }],
+        read: () => `noise ${Math.round(noise * 100)} · traceable ${Math.round(share * 100)}% of records · fidelity ${Math.round(fid * 100)}%`,
+      };
+    },
+  },
+
+  /* Thread 2: who is exposed first? Halos reach to each record's k-th nearest lookalike. */
+  exposed: {
+    tag: "Toy 2 · exposure", title: "Lookalikes", a: "#17a398", b: "#e5a00d", warm: 2,
+    cap: "Each dot is a record, and its halo reaches out to its k-th nearest neighbor, so a big halo means few lookalikes. One record keeps wandering out of the crowd; its halo grows and turns gold as it goes. Rare records like it are the ones our attacks reconstruct first: in our PoPETs study, the most atypical 10% of people were reconstructed 3.4 times as well as everyone else.",
+    hint: "Click anywhere to add a record of your own. The slider sets k.",
+    make(S, A, B) {
+      const R = rng(5), pts = [];
+      for (let i = 0; i < 46; i++) pts.push({ hx: .3 + R.gauss() * .085, hy: .6 + R.gauss() * .11 });
+      for (let i = 0; i < 30; i++) pts.push({ hx: .63 + R.gauss() * .07, hy: .44 + R.gauss() * .09 });
+      pts.forEach(p => { p.hx = clamp(p.hx, .03, .97); p.hy = clamp(p.hy, .05, .95); p.ph = R.next() * TAU; p.sp = .3 + R.next() * .5; p.x = p.hx; p.y = p.hy; });
+      const base = pts.length, walker = { hx: .63, hy: .44, ph: 0, sp: 0, x: .63, y: .44, walker: true };
+      pts.push(walker);
+      let K = 3, ratio = 1;
+      return {
+        step(dt, S) {
+          for (const p of pts) if (!p.walker) { p.x = p.hx + Math.sin(S.t * p.sp + p.ph) * .008; p.y = p.hy + Math.cos(S.t * p.sp * .8 + p.ph) * .008; }
+          // out to the corner and back every 10 s, resting at each end
+          const c = (S.t % 10) / 10, f = ease(clamp((c < .5 ? c : 1 - c) * 2.8 - .2, 0, 1));
+          walker.x = .63 + (.9 - .63) * f; walker.y = .44 + (.15 - .44) * f;
+        },
+        draw(ctx, S) {
+          const big = S.big, { X, Y } = frame(S, big ? .06 : .08), m = Math.min(S.w, S.h);
+          const P = pts.map(p => [X(p.x), Y(p.y)]);
+          const ex = P.map(([x, y], i) => { const d = P.map(([u, v], j) => i === j ? Infinity : Math.hypot(u - x, v - y)).sort((a, b) => a - b); return d[Math.min(K, d.length) - 1]; });
+          const sorted = [...ex].sort((a, b) => a - b), med = sorted[sorted.length >> 1], top = ex.indexOf(sorted[sorted.length - 1]);
+          ratio = sorted[sorted.length - 1] / med;
+          const rare = i => i === top || ex[i] > 3.4 * med;
+          P.forEach(([x, y], i) => {
+            const r = Math.min(ex[i], m * (big ? .2 : .18)), hot = rare(i);
+            dot(ctx, x, y, r, hot ? B : A, hot ? .13 : .045);
+            ring(ctx, x, y, r, hot ? B : A, hot ? .75 : .16, hot ? 1.4 : 1);
+          });
+          P.forEach(([x, y], i) => dot(ctx, x, y, rare(i) ? (big ? 5 : 3.6) : (big ? 3 : 2.2), rare(i) ? B : A, rare(i) ? 1 : .9));
+          const [tx, ty] = P[top];
+          if (big) pill(ctx, `k = ${K} · ${ratio.toFixed(1)}× the median distance`, clamp(tx, 150, S.w - 150), clamp(ty + Math.min(ex[top], m * .2) + 18, 20, S.h - 20), "#1c1a36", B, 12);
+          else label(ctx, `${ratio.toFixed(1)}× median`, S.w - 11, S.h - 14, B, 10, "right", 700);
+        },
+        click(x, y, S) {
+          const { ix, iy } = frame(S, .06);
+          if (pts.length - base > 25) pts.splice(base + 1, 1);
+          const hx = clamp(ix(x), 0, 1), hy = clamp(iy(y), 0, 1);
+          pts.push({ hx, hy, x: hx, y: hy, ph: 0, sp: .4 });
+        },
+        controls: [
+          { type: "range", label: "k, the lookalikes a record needs", min: 1, max: 8, get: () => K, set: v => { K = v; } },
+          { type: "buttons", items: [{ label: "Remove my records", run: () => { pts.splice(base + 1); } }] },
+        ],
+        read: () => `k = ${K} · the most exposed record is ${ratio.toFixed(1)}× as far from its k-th lookalike as the median record`,
+      };
+    },
+  },
+
+  /* Thread 3: one ε, a shaped object. The same noise for everyone, or noise that follows the data's shape. */
+  shaped: {
+    tag: "Toy 3 · next", title: "One ε, shaped noise", a: "#d6409f", b: "#7b86f2", warm: 3,
+    cap: "A direction, not a result yet. The faint lines join each record to its three nearest neighbors, one way to see the shape of the data. Each disc is the noise a release adds around a record, and the pink dot is where the record lands in the release. With one ε for everyone, every disc is the same size, so a record in a dense region hides among its neighbors while an isolated record still stands alone. With noise that follows the shape, isolated records get more cover and dense ones need less. Whether that can be done with a proof is the question.",
+    hint: "Switch between the two ways of spending the noise.",
+    make(S, A, B) {
+      const R = rng(41), pts = [];
+      for (let i = 0; i < 38; i++) { const t = clamp(.5 + R.gauss() * .2, .02, .98); pts.push({ x: .1 + .8 * t, y: .52 + .2 * Math.sin(t * 5.6) + R.gauss() * .035 }); }
+      [[.1, .16], [.88, .14], [.56, .9], [.24, .9]].forEach(([x, y]) => pts.push({ x, y }));
+      const n = pts.length, dist = (a, b) => Math.hypot((a.x - b.x) * 1.33, a.y - b.y);
+      const edges = new Set(), spars = [];
+      pts.forEach((p, i) => {
+        const near = pts.map((q, j) => [j, dist(p, q)]).filter(([j]) => j !== i).sort((a, b) => a[1] - b[1]).slice(0, 3);
+        near.forEach(([j]) => edges.add(i < j ? `${i}-${j}` : `${j}-${i}`));
+        spars.push(near.reduce((s, [, d]) => s + d, 0) / 3);
+      });
+      const med = [...spars].sort((a, b) => a - b)[n >> 1], f = spars.map(s => clamp(s / med, .5, 3));
+      pts.forEach(p => { p.ph = R.next() * TAU; p.sp = .5 + R.next() * .8; p.ph2 = R.next() * TAU; p.sp2 = .3 + R.next() * .5; });
+      let target = 0, mix = 0, manual = false;
+      const fac = i => 1 + (f[i] - 1) * mix;
+      return {
+        step(dt, S) {
+          if (!manual) target = Math.floor(S.t / 4.5) % 2;
+          mix += (target - mix) * Math.min(1, dt * 2.6);
+        },
+        draw(ctx, S) {
+          const big = S.big, { X, Y } = frame(S, big ? .08 : .1), base = Math.min(S.w, S.h) * .045;
+          for (const e of edges) { const [i, j] = e.split("-").map(Number); seg(ctx, X(pts[i].x), Y(pts[i].y), X(pts[j].x), Y(pts[j].y), B, .4, 1); }
+          pts.forEach((p, i) => { const r = base * fac(i); dot(ctx, X(p.x), Y(p.y), r, A, .07); ring(ctx, X(p.x), Y(p.y), r, A, .28, 1); });
+          pts.forEach((p, i) => {
+            const r = base * fac(i) * (.55 + .4 * Math.sin(S.t * p.sp + p.ph)), a = p.ph2 + S.t * p.sp2;
+            const sx = X(p.x) + Math.cos(a) * r, sy = Y(p.y) + Math.sin(a) * r;
+            seg(ctx, X(p.x), Y(p.y), sx, sy, A, .35, 1);
+            dot(ctx, X(p.x), Y(p.y), big ? 2.8 : 2, INK.ink2, .9);
+            dot(ctx, sx, sy, big ? 3.4 : 2.4, A, .95);
+          });
+          pill(ctx, mix < .5 ? "one ε for everyone" : "noise follows the shape", S.w / 2, S.h - (big ? 22 : 14), "#fff", mix < .5 ? B : A, big ? 12 : 10);
+        },
+        controls: [{ type: "buttons", items: [
+          { label: "One ε for everyone", run: () => { manual = true; target = 0; }, on: () => target === 0 },
+          { label: "Noise follows the shape", run: () => { manual = true; target = 1; }, on: () => target === 1 },
+        ] }],
+        read: () => `most isolated record: ${fac(f.indexOf(Math.max(...f))).toFixed(1)}× the typical noise · densest: ${fac(f.indexOf(Math.min(...f))).toFixed(1)}×`,
+      };
+    },
+  },
+
+  /* Thread 4: fairness you can edit in. Edge cuts on a causal generator's graph. */
+  fair: {
+    tag: "Toy 4 · fairness", title: "Cut the edge", a: "#23a565", b: "#ef7a1a", warm: 2.5,
+    cap: "A causal generator samples each column from its parents in a graph, so whatever it releases follows the arrows. Orange marks influence that starts at the protected attribute (here, sex). Cut the edge from sex straight into income and the generator becomes unaware of sex when it sets income; cut every edge out of sex and no path is left, which gives demographic parity. The bars are toy numbers. In the paper, these cuts carried over to nine generators from three families, at a cost to a downstream classifier of about 0.07 to 0.15 AUC on average.",
+    hint: "Click an edge to cut it, and again to restore it.",
+    make(S, A, B) {
+      const N = { s: [.13, .24, "sex"], e: [.13, .8, "education"], o: [.5, .55, "occupation"], y: [.86, .3, "income"] };
+      const E = [["s", "o"], ["s", "y"], ["e", "o"], ["e", "y"], ["o", "y"]].map(([u, v]) => ({ u, v, cut: false }));
+      const edge = (u, v) => E.find(e => e.u === u && e.v === v);
+      const R = rng(3), parts = [];
+      let manual = false, spawn = 0, gapShown = .22;
+      const preset = st => E.forEach(e => e.cut = e.u === "s" && (st === 2 || (st === 1 && e.v === "y")));
+      const gap = () => .03 + (edge("s", "y").cut ? 0 : .12) + (edge("s", "o").cut || edge("o", "y").cut ? 0 : .07);
+      function curve(e, S, X, Y) {
+        const [x1, y1] = [X(N[e.u][0]), Y(N[e.u][1])], [x2, y2] = [X(N[e.v][0]), Y(N[e.v][1])];
+        const mx = (x1 + x2) / 2 - (y2 - y1) * .12, my = (y1 + y2) / 2 + (x2 - x1) * .12;
+        return t => [(1 - t) ** 2 * x1 + 2 * (1 - t) * t * mx + t * t * x2, (1 - t) ** 2 * y1 + 2 * (1 - t) * t * my + t * t * y2];
+      }
+      return {
+        step(dt, S) {
+          if (!manual) preset([0, 1, 2, 0][Math.floor(S.t / 3.2) % 4]);
+          spawn -= dt;
+          if (spawn <= 0) {
+            spawn = .16;
+            const live = E.filter(e => !e.cut), e = live[Math.floor(R.next() * live.length)];
+            if (e) parts.push({ e, u: 0, hot: e.u === "s" || (e.u === "o" && !edge("s", "o").cut && R.next() < .5) });
+          }
+          for (const p of parts) p.u += dt * .42;
+          for (let i = parts.length - 1; i >= 0; i--) if (parts[i].u >= 1 || parts[i].e.cut) parts.splice(i, 1);
+          gapShown += (gap() - gapShown) * Math.min(1, dt * 3);
+        },
+        draw(ctx, S) {
+          const big = S.big, { X, Y } = frame(S, big ? .1 : .12), nr = big ? 26 : 15;
+          for (const e of E) {
+            const c = curve(e, S, X, Y), steps = 28;
+            ctx.setLineDash(e.cut ? [3, 4] : []); ctx.beginPath();
+            for (let i = 0; i <= steps; i++) { const t = i / steps; if (e.cut && Math.abs(t - .5) < .09) { ctx.stroke(); ctx.beginPath(); continue; } const [x, y] = c(t); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+            ctx.strokeStyle = e.u === "s" ? B : INK.muted; ctx.globalAlpha = e.cut ? .35 : .55; ctx.lineWidth = big ? 1.8 : 1.3; ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+            if (e.cut) { const [x, y] = c(.5); label(ctx, "✂", x, y, B, big ? 18 : 12, "center", 700); }
+            else { const [x0, y0] = c(.8), [x1, y1] = c(.84), a = Math.atan2(y1 - y0, x1 - x0), L = big ? 8 : 5; ctx.beginPath(); ctx.moveTo(x1 + Math.cos(a) * L, y1 + Math.sin(a) * L); ctx.lineTo(x1 + Math.cos(a + 2.5) * L, y1 + Math.sin(a + 2.5) * L); ctx.lineTo(x1 + Math.cos(a - 2.5) * L, y1 + Math.sin(a - 2.5) * L); ctx.fillStyle = e.u === "s" ? B : INK.muted; ctx.globalAlpha = .7; ctx.fill(); ctx.globalAlpha = 1; }
+          }
+          for (const p of parts) { const [x, y] = curve(p.e, S, X, Y)(p.u); dot(ctx, x, y, big ? 3.6 : 2.4, p.hot ? B : A, Math.sin(p.u * Math.PI) * .95); }
+          for (const [k, [x, y, name]] of Object.entries(N)) {
+            dot(ctx, X(x), Y(y), nr, INK.surface, 1); ring(ctx, X(x), Y(y), nr, k === "s" ? B : A, .95, k === "s" ? 2.2 : 1.6);
+            if (big) label(ctx, name, X(x), Y(y), INK.ink, 13, "center", 700);
+            else label(ctx, name.slice(0, 3), X(x), Y(y), INK.ink, 10, "center", 700);
+          }
+          // the gap between the groups' rates of high income
+          const bx = big ? S.w * .62 : S.w * .6, by = S.h - (big ? 52 : 30), bw = big ? S.w * .3 : S.w * .32, bh = big ? 9 : 6;
+          const ra = .3, rb = .3 + gapShown;
+          [["group 1", ra], ["group 2", rb]].forEach(([t, v], i) => {
+            const yy = by + i * (bh + (big ? 10 : 6));
+            seg(ctx, bx, yy, bx + bw, yy, INK.line, 1, bh); seg(ctx, bx, yy, bx + bw * v, yy, i ? B : A, 1, bh);
+            if (big) label(ctx, t, bx - 10, yy, INK.muted, 11, "right");
+          });
+          label(ctx, `gap ${gapShown.toFixed(2)}`, bx + bw, by - (big ? 18 : 11), INK.ink2, big ? 12 : 9, "right", 700);
+        },
+        click(x, y, S) {
+          const { X, Y } = frame(S, .1); let best = null, bd = 16;
+          for (const e of E) { const c = curve(e, S, X, Y); for (let i = 1; i < 20; i++) { const [px, py] = c(i / 20), d = Math.hypot(px - x, py - y); if (d < bd) { bd = d; best = e; } } }
+          if (best) { manual = true; best.cut = !best.cut; }
+        },
+        controls: [{ type: "buttons", items: [
+          { label: "Original graph", run: () => { manual = true; preset(0); }, on: () => E.every(e => !e.cut) },
+          { label: "Unaware: cut sex → income", run: () => { manual = true; preset(1); }, on: () => E.every(e => e.cut === (e.u === "s" && e.v === "y")) },
+          { label: "Parity: cut every edge out of sex", run: () => { manual = true; preset(2); }, on: () => E.every(e => e.cut === (e.u === "s")) },
+        ] }],
+        read: () => `edges cut: ${E.filter(e => e.cut).map(e => `${N[e.u][2]} → ${N[e.v][2]}`).join(", ") || "none"} · gap in high-income rate between groups: ${gapShown.toFixed(2)} (toy numbers)`,
+      };
+    },
+  },
+
+  /* Thread 5: computing on data no one can see. Additive secret sharing, mod 1000. */
+  mpc: {
+    tag: "Toy 5 · secure computation", title: "Two shares, one answer", a: "#8a5cf0", b: "#1f9fd8", warm: 5.6,
+    cap: "Two-party secure computation in miniature. The drug (here just a number) is split into two random-looking shares that add up to it, modulo 1,000. Each server holds one share, which on its own says nothing about the drug, and applies the public model (here 3x + 7, with only one server adding the 7). The two output shares add up to the true prediction, though neither server ever saw the drug. Linear steps like this one cost nothing extra. Our iDASH solution spent its effort on the nonlinear steps, which need the servers to talk.",
+    hint: "Click the canvas, or the button, for a new secret drug.",
+    make(S, A, B) {
+      const M = 1000, R = rng(9), L = 7;
+      let s, r, t0 = 0, cycle = 0;
+      const fresh = () => { s = 12 + Math.floor(R.next() * 88); r = Math.floor(R.next() * M); };
+      fresh();
+      const vals = () => { const a = r, b = (s - r + M) % M, oa = (3 * a + 7) % M, ob = (3 * b) % M; return { a, b, oa, ob, res: (oa + ob) % M }; };
+      const D = [.1, .5], S0 = [.5, .2], S1 = [.5, .8], O = [.9, .5];
+      const lerp2 = (p, q, u) => [p[0] + (q[0] - p[0]) * u, p[1] + (q[1] - p[1]) * u];
+      return {
+        step(dt, S) { const c = Math.floor((S.t - t0) / L); if (c !== cycle) { cycle = c; fresh(); } },
+        draw(ctx, S) {
+          const big = S.big, { X, Y } = frame(S, big ? .1 : .12), u = ((S.t - t0) % L + L) % L, v = vals(), px = big ? 13 : 10;
+          const at = p => [X(p[0]), Y(p[1])];
+          [[D, S0], [D, S1], [S0, O], [S1, O]].forEach(([p, q]) => seg(ctx, ...at(p), ...at(q), INK.muted, .35, 1, [3, 5]));
+          // servers
+          [[S0, "server 0", v.a, v.oa], [S1, "server 1", v.b, v.ob]].forEach(([p, name, sh, out]) => {
+            const [x, y] = at(p), w = big ? 150 : 74, h = big ? 64 : 38, busy = u > 2.4 && u < 3.6;
+            ctx.beginPath(); ctx.roundRect(x - w / 2, y - h / 2, w, h, big ? 12 : 8); ctx.fillStyle = INK.surface; ctx.fill();
+            ctx.strokeStyle = B; ctx.globalAlpha = busy ? .95 : .55; ctx.lineWidth = busy ? 2 : 1.2; ctx.stroke(); ctx.globalAlpha = 1;
+            label(ctx, name, x, y - h / 2 - (big ? 11 : 8), INK.muted, px - 1, "center");
+            const shown = u < 2.2 ? "" : u < 3 ? `${sh}` : `${sh} → ${out}`;
+            label(ctx, shown, x, y, INK.ink, px + 1, "center", 700);
+          });
+          label(ctx, "3x + 7", X(.5), Y(.5), INK.muted, px, "center", 700);
+          // the secret goes in, the shares travel, the answer comes out
+          const [dx, dy] = at(D);
+          if (u < 1.6) pill(ctx, big ? `drug ${s}` : `${s}`, dx, dy, "#fff", A, px + 1);
+          else label(ctx, "drug", dx, dy, INK.muted, px, "center");
+          if (u > .9 && u < 2.4) { const k = ease(clamp((u - .9) / 1.4, 0, 1)); [[S0, v.a], [S1, v.b]].forEach(([p, sh]) => { const [x, y] = at(lerp2(D, p, k)); pill(ctx, `${sh}`, x, y, "#fff", B, px); }); }
+          if (u > 3.6 && u < 4.9) { const k = ease(clamp((u - 3.6) / 1.2, 0, 1)); [[S0, v.oa], [S1, v.ob]].forEach(([p, o]) => { const [x, y] = at(lerp2(p, O, k)); pill(ctx, `${o}`, x, y, "#fff", B, px); }); }
+          const [ox, oy] = at(O);
+          if (u >= 4.9) {
+            pill(ctx, `${v.res}`, ox, oy, "#fff", A, px + 2);
+            if (big) { label(ctx, `${v.oa} + ${v.ob} = ${v.res} (mod 1000)`, ox, oy + 30, INK.ink2, 12, "right"); label(ctx, `= 3·${s} + 7`, ox, oy + 48, A, 12, "right", 700); }
+          } else label(ctx, "result", ox, oy, INK.muted, px, "center");
+        },
+        click(x, y, S) { fresh(); t0 = S.t; cycle = 0; },
+        controls: [{ type: "buttons", items: [{ label: "New secret drug", run: () => { fresh(); t0 = S.t; cycle = 0; } }] }],
+        read: () => { const v = vals(); return `drug ${s} = ${v.a} + ${v.b} (mod 1000) · server 0 computes 3·${v.a} + 7 = ${v.oa} · server 1 computes 3·${v.b} = ${v.ob} · ${v.oa} + ${v.ob} = ${v.res} = 3·${s} + 7`; },
+      };
+    },
+  },
+};
+
+function mountToy(canvas, def, big, onPaint) {
+  const ctx = canvas.getContext("2d");
+  const S = { w: 0, h: 0, t: 0, big, ptr: { x: 0, y: 0, in: false } };
+  const scene = def.make(S, def.a, def.b);
+  let vis = false, raf = 0, last = 0, alive = true;
+  const size = () => {
+    const r = canvas.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2);
+    S.w = r.width; S.h = r.height; canvas.width = Math.round(r.width * d); canvas.height = Math.round(r.height * d); ctx.setTransform(d, 0, 0, d, 0, 0);
+  };
+  const paint = () => { if (!S.w) return; ctx.clearRect(0, 0, S.w, S.h); scene.draw(ctx, S); onPaint && onPaint(scene); };
+  const loop = now => {
+    raf = 0; if (!alive || !vis || document.hidden) return;
+    const dt = Math.min((now - last) / 1000, .05); last = now; S.t += dt; scene.step(dt, S); paint();
+    raf = requestAnimationFrame(loop);
+  };
+  const start = () => { if (raf || reduced || !alive) return; last = performance.now(); raf = requestAnimationFrame(loop); };
+  // run the scene forward a little so a still frame (reduced motion) shows it mid-action
+  for (let i = 0, n = (def.warm || 2) * 30; i < n; i++) { S.t += 1 / 30; scene.step(1 / 30, S); }
+  size(); paint();
+  const ro = new ResizeObserver(() => { size(); paint(); }); ro.observe(canvas);
+  const io = new IntersectionObserver(es => { vis = es[0].isIntersecting; if (vis) start(); }); io.observe(canvas);
+  const wake = () => { if (!document.hidden && vis) start(); };
+  document.addEventListener("visibilitychange", wake);
+  if (big) {
+    const pos = e => { const r = canvas.getBoundingClientRect(); S.ptr.x = e.clientX - r.left; S.ptr.y = e.clientY - r.top; };
+    canvas.addEventListener("pointermove", e => { pos(e); S.ptr.in = true; if (reduced) paint(); });
+    canvas.addEventListener("pointerleave", () => { S.ptr.in = false; if (reduced) paint(); });
+    canvas.addEventListener("click", e => { pos(e); if (scene.click) { scene.click(S.ptr.x, S.ptr.y, S); if (reduced) { for (let i = 0; i < 60 * (def.warm || 2); i++) { S.t += 1 / 60; scene.step(1 / 60, S); } } paint(); } });
+  }
+  return { scene, paint, stop() { alive = false; ro.disconnect(); io.disconnect(); document.removeEventListener("visibilitychange", wake); raf && cancelAnimationFrame(raf); } };
+}
+
+function toys() {
+  const dlg = $("#toy-dlg"), stage = $("#toy-stage");
+  let big = null, opener = null, lastRead = "";
+  const tiles = $$(".toy[data-toy]").map(btn => {
+    const def = TOYS[btn.dataset.toy];
+    btn.style.setProperty("--toy-a", def.a); btn.style.setProperty("--toy-b", def.b);
+    btn.setAttribute("aria-label", `${def.title}: open the interactive toy`);
+    btn.innerHTML = `<canvas aria-hidden="true"></canvas><span class="toy-tag"><i></i>${esc(def.tag)}</span><span class="toy-open" aria-hidden="true">↗</span>`;
+    btn.addEventListener("click", () => open(btn, def));
+    return mountToy($("canvas", btn), def, false);
+  });
+  // after each frame of the big toy: refresh the readout, the slider, and which preset is pressed
+  function sync(scene) {
+    const r = scene.read ? scene.read() : "";
+    if (r !== lastRead) { $("#toy-read").textContent = lastRead = r; }
+    for (const c of scene.controls || []) {
+      if (c.input && document.activeElement !== c.input) c.input.value = c.get();
+      for (const it of c.items || []) if (it.on && it.el) it.el.setAttribute("aria-pressed", it.on());
+    }
+  }
+  function controls(t) {
+    const box = $("#toy-ctrls"); box.innerHTML = "";
+    for (const c of t.scene.controls || []) {
+      if (c.type === "range") {
+        const lab = document.createElement("label"), inp = document.createElement("input");
+        lab.textContent = c.label; inp.type = "range"; inp.min = c.min; inp.max = c.max; inp.step = c.step || 1; inp.value = c.get();
+        inp.addEventListener("input", () => { c.set(+inp.value); t.paint(); });
+        lab.appendChild(inp); box.appendChild(lab); c.input = inp;
+      } else {
+        const row = document.createElement("div"); row.className = "toy-btns";
+        for (const it of c.items) {
+          const b = document.createElement("button"); b.type = "button"; b.textContent = it.label;
+          if (it.on) b.setAttribute("aria-pressed", it.on());
+          b.addEventListener("click", () => { it.run(); t.paint(); });
+          row.appendChild(b); it.el = b;
+        }
+        box.appendChild(row);
+      }
+    }
+  }
+  function open(btn, def) {
+    opener = btn; lastRead = "";
+    dlg.style.setProperty("--toy-a", def.a); dlg.style.setProperty("--toy-b", def.b);
+    $("#toy-eyebrow").innerHTML = `<i></i>${esc(def.tag)}`;
+    $("#toy-title").textContent = def.title; $("#toy-cap").textContent = def.cap; $("#toy-hint").textContent = def.hint;
+    big && big.stop();
+    stage.innerHTML = `<canvas role="img" aria-label="${esc(def.title)}, interactive. ${esc(def.cap)}"></canvas>`;
+    const show = () => { dlg.showModal(); big = mountToy($("canvas", stage), def, true, sync); controls(big); sync(big.scene); };
+    // where View Transitions exist, the tile grows into the dialog
+    if (!reduced && document.startViewTransition && !document.hidden) {
+      btn.style.viewTransitionName = "toy"; dlg.classList.add("vt");
+      const tr = document.startViewTransition(() => { btn.style.viewTransitionName = ""; stage.style.viewTransitionName = "toy"; show(); });
+      tr.ready.catch(() => {});
+      tr.finished.catch(() => {}).finally(() => { stage.style.viewTransitionName = ""; dlg.classList.remove("vt"); });
+    } else show();
+  }
+  dlg.addEventListener("close", () => { big && big.stop(); big = null; opener && opener.focus(); });
+  dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+  $("#toy-x").addEventListener("click", () => dlg.close());
+  return { repaint() { tiles.forEach(t => t.paint()); big && big.paint(); } };
+}
+
+/* ==================================================================
+   BACKGROUND: a soft network of nodes and edges behind the inner tabs,
+   turning slowly in 3D. Nearer nodes are bigger and brighter, and move
+   more with the scroll and the pointer. Tune it with BG.
+   ================================================================== */
+const BG = {
+  tabs: ["research", "publications", "teaching", "cv", "other"], // where it shows
+  nodes: 56,      // how many nodes
+  links: 2,       // edges from each node, to random picks among its six nearest
+  speed: 1,       // drift and rotation speed (0 holds it still)
+  opacity: 1,     // overall strength, 0 to 1
+  parallax: .35,  // how far the nearest nodes shift per pixel scrolled
+};
+function bgNet() {
+  const cv = $("#bg-net"), ctx = cv.getContext("2d"), R = rng(11);
+  let W = 0, H = 0, raf = 0, last = 0, t = 0, on = false, mx = 0, my = 0, offT = 0;
+  const N = Array.from({ length: BG.nodes }, () => ({ x: R.next() * 2 - 1, y: R.next() * 2 - 1, z: R.next() * 2 - 1,
+    vx: (R.next() - .5) * .04, vy: (R.next() - .5) * .04, vz: (R.next() - .5) * .04, r: .7 + R.next() * 1.3, alt: R.next() < .3 }));
+  const E = [], seen = new Set();
+  N.forEach((a, i) => {
+    const near = N.map((b, j) => [j, (a.x - b.x) ** 2 + (a.y - b.y) ** 2 + (a.z - b.z) ** 2]).sort((p, q) => p[1] - q[1]).slice(1, 7);
+    for (let l = 0; l < BG.links; l++) {
+      const j = near[Math.floor(R.next() * near.length)][0], k = i < j ? `${i}-${j}` : `${j}-${i}`;
+      if (!seen.has(k)) { seen.add(k); E.push([i, j]); }
+    }
+  });
+  const size = () => { const d = Math.min(devicePixelRatio || 1, 1.5); W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); };
+  function proj(n, ang) {
+    const c = Math.cos(ang), s = Math.sin(ang), x = n.x * c - n.z * s, z = n.x * s + n.z * c;
+    const p = 1 / (2.2 - z * .7), d = clamp((z + 1.4) / 2.8, 0, 1), sc = reduced ? 0 : 1;
+    const span = H * 1.4;
+    let y = H / 2 + n.y * H * .95 * p - scrollY * BG.parallax * (.25 + d) * sc;
+    y = ((y + H * .2) % span + span) % span - H * .2;
+    return { x: W / 2 + x * W * .95 * p + mx * 16 * d * sc, y: y + my * 10 * d * sc, d };
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const P = N.map(n => proj(n, t * .035)), maxL = Math.max(W, H) * .3;
+    for (const [i, j] of E) {
+      const a = P[i], b = P[j], L = Math.hypot(a.x - b.x, a.y - b.y);
+      if (L > maxL) continue;
+      seg(ctx, a.x, a.y, b.x, b.y, INK.dot, (1 - L / maxL) * (.1 + .26 * (a.d + b.d) / 2) * BG.opacity, .6 + (a.d + b.d) * .5);
+    }
+    P.map((q, i) => [q, N[i]]).sort((u, v) => u[0].d - v[0].d).forEach(([q, n]) => {
+      const r = n.r * (1.1 + 3.4 * q.d), col = n.alt ? INK.violet : INK.dot;
+      if (q.d > .62) dot(ctx, q.x, q.y, r * 3.2, col, .05 * BG.opacity);
+      dot(ctx, q.x, q.y, r, col, (.14 + .44 * q.d) * BG.opacity);
+    });
+  }
+  function loop(now) {
+    raf = 0; if (document.hidden || (!on && now > offT)) return;
+    const dt = Math.min((now - last) / 1000, .05) * BG.speed; last = now; t += dt;
+    for (const n of N) for (const k of ["x", "y", "z"]) { n[k] += n["v" + k] * dt; if (Math.abs(n[k]) > 1.15) n["v" + k] = -Math.sign(n[k]) * Math.abs(n["v" + k]); }
+    draw(); raf = requestAnimationFrame(loop);
+  }
+  const start = () => { if (raf || reduced) return; last = performance.now(); raf = requestAnimationFrame(loop); };
+  size();
+  addEventListener("resize", () => { size(); draw(); });
+  addEventListener("scroll", () => { if (on && reduced) draw(); }, { passive: true });
+  document.addEventListener("visibilitychange", () => on && start());
+  if (matchMedia("(hover: hover) and (pointer: fine)").matches) addEventListener("pointermove", e => { mx = e.clientX / W * 2 - 1; my = e.clientY / H * 2 - 1; }, { passive: true });
+  return {
+    show(id) {
+      on = BG.tabs.includes(id); cv.classList.toggle("on", on);
+      if (on) { draw(); start(); } else offT = performance.now() + 1000; // let it fade out before stopping
+    },
+    repaint: draw,
+  };
+}
+
+/* ==================================================================
+   THEME + TABS
+   ================================================================== */
+const THEMES = ["system", "light", "dark"], ICON = { system: "#i-auto", light: "#i-sun", dark: "#i-moon" };
+let theme = "system", fig, mo, toyKit, bg;
+try { theme = localStorage.getItem("theme") || "system"; } catch (e) {}
+function applyTheme() {
+  if (theme === "system") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", theme);
+  const b = $("#theme-btn"); b.setAttribute("aria-label", `Color theme: ${theme}`); b.title = `Theme: ${theme}`; $("use", b).setAttribute("href", ICON[theme]);
+  readInk();
+  fig && fig.recolor(); toyKit && toyKit.repaint(); bg && bg.repaint();
+}
+$("#theme-btn").addEventListener("click", () => {
+  theme = THEMES[(THEMES.indexOf(theme) + 1) % 3];
+  try { localStorage.setItem("theme", theme); } catch (e) {}
+  vt(applyTheme, true);
+});
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { readInk(); fig && fig.recolor(); toyKit && toyKit.repaint(); bg && bg.repaint(); });
+
+const TABS = ["home", "research", "publications", "teaching", "cv", "other"];
+const TITLES = { home: "Steven Golob", research: "Research · Steven Golob", publications: "Publications · Steven Golob", teaching: "Teaching · Steven Golob", cv: "CV · Steven Golob", other: "Other interests · Steven Golob" };
+let current = null;
+function moveIndicator() {
+  const a = $(`.tab[data-tab="${current}"]`), ind = $("#tab-ind"); if (!a) return;
+  ind.style.width = `${a.offsetWidth}px`; ind.style.transform = `translateX(${a.offsetLeft}px)`;
+  a.scrollIntoView({ block: "nearest", inline: "nearest" });
+  tabFade();
+}
+// on narrow screens the tab bar scrolls; fade its right edge while more tabs are hidden there
+function tabFade() { const t = $("#tabs"); t.classList.toggle("more", t.scrollLeft + t.clientWidth < t.scrollWidth - 2); }
+$("#tabs").addEventListener("scroll", tabFade, { passive: true });
+function show(id, animate) {
+  if (!TABS.includes(id)) id = "home";
+  if (id === current) return;
+  const run = () => {
+    current = id;
+    $$(".view").forEach(v => v.hidden = v.dataset.view !== id);
+    $$(".tab").forEach(t => t.setAttribute("aria-current", t.dataset.tab === id ? "page" : "false"));
+    document.title = TITLES[id];
+    moveIndicator();
+    bg && bg.show(id);
+    window.scrollTo({ top: 0, behavior: "instant" });
+    mo && mo.refresh();
+  };
+  vt(run, animate);
+}
+addEventListener("hashchange", () => show(location.hash.slice(1), true));
+addEventListener("resize", moveIndicator);
+$("#tabs").addEventListener("keydown", e => {
+  if (!["ArrowLeft", "ArrowRight"].includes(e.key)) return;
+  const i = TABS.indexOf(current) + (e.key === "ArrowRight" ? 1 : -1);
+  const id = TABS[(i + TABS.length) % TABS.length]; location.hash = id; $(`.tab[data-tab="${id}"]`).focus();
+});
+
+applyTheme();
+bg = bgNet();
+renderNews(false); renderSelected(); renderLists(); renderChips(); renderPubs(); renderChart(); renderPhotos(); renderStage();
+mo = motion();
+show(location.hash.slice(1), false);
+mo.refresh();
+fig = field();
+toyKit = toys();
+document.fonts && document.fonts.ready.then(moveIndicator);
+</script>
 </body>
 </html>
