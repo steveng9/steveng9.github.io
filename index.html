@@ -1146,6 +1146,7 @@ const REPOS = [
   { name: "Reconstruction", text: "Reconstruction attacks and benchmark from the PoPETs 2027 SoK. Archived artifact: doi:10.5281/zenodo.22701232." },
   { name: "scRNA-seq_privacy_audits", text: "scMAMA-MIA: membership inference on synthetic single-cell data (NeurIPS 2026)." },
   { name: "CausalFairnessInSDG", text: "Causal fairness edge cuts across nine synthetic data generators." },
+  { name: "Causal-Synthetic-Data-Generator", href: "https://steveng9.github.io/Causal-Synthetic-Data-Generator/", text: "The causal graph lab, live in the browser: draw a causal graph, generate a table from it, and see what each fairness cut does to the data and to models trained on it." },
   { name: "CAMDA-26-PPMLHuskies-RedTeam-bulkRNAseq", text: "The CAMDA 2026 Track I red-team attack, with the undergraduate team." },
   { name: "PETsChallenge", text: "Our second-place US–UK PETs Prize solution." },
 ];
@@ -1321,7 +1322,7 @@ function renderLists() {
     <li class="${c.win ? "win" : ""}" data-reveal style="--i:${i % 4}"><time>${c.year}</time><div>
       <h3>${c.url ? `<a href="${esc(c.url)}"${ext(c.url)} style="color:inherit;text-decoration:none">${esc(c.title)}</a>` : esc(c.title)}</h3>
       <div class="result">${esc(c.result)}</div><p>${esc(c.text)}</p></div></li>`).join("");
-  $("#repos").innerHTML = REPOS.map(r => `<a class="repo" href="https://github.com/steveng9/${r.name}" target="_blank" rel="noopener"><b>${esc(r.name)}</b><span>${esc(r.text)}</span></a>`).join("");
+  $("#repos").innerHTML = REPOS.map(r => `<a class="repo" href="${r.href || `https://github.com/steveng9/${r.name}`}" target="_blank" rel="noopener"><b>${esc(r.name)}</b><span>${esc(r.text)}</span></a>`).join("");
   $("#awards").innerHTML = AWARDS.map(([y, t]) => `<li><span class="when">${y}</span><span class="what"><b>${esc(t)}</b></span></li>`).join("");
   $("#talks").innerHTML = TALKS.map(([y, t, v]) => `<li><span class="when">${y}</span><span class="what"><b>${esc(t)}</b><span>${esc(v)}</span></span></li>`).join("");
 }
