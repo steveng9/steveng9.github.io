@@ -649,8 +649,9 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: 
     <div class="thread-body">
       <div class="prose">
         <p>Whoever generates a synthetic dataset chooses the generating process, and a process can be edited. DECAF showed that three fairness definitions become three sets of edge cuts on one GAN’s causal graph. We ported the cuts to nine generators from three unrelated families (marginals-based, GAN, and diffusion, each with differentially private variants), over 2,520 matched-pair runs on the Adult and COMPAS datasets. The mechanism transfers to all of them. Our causal diffusion backbone produced the fairest release of any family we tested, the cut barely moves fidelity, it costs a downstream classifier about 0.07 to 0.15 AUC on average, and adding privacy guarantees doesn’t make the data less fair.</p>
+        <p>To work out what a cut does on graphs small enough to check by hand, I built a <a href="https://steveng9.github.io/Causal-Synthetic-Data-Generator/" target="_blank" rel="noopener">causal graph lab</a> that runs in the browser. You draw the graph, mark which nodes are protected, admissible, or hidden, and generate a table from it. The lab then shows which paths from the protected attribute to the outcome each fairness definition cuts, how much of the fairness gap each path carries, and what the cut costs a model trained on the table. It also loads the column sets of the 11 benchmark datasets from our experiments.</p>
       </div>
-      <div class="linkrow"><a href="https://arxiv.org/abs/2609.03180" target="_blank" rel="noopener">arXiv</a><a href="pdfs/Causal_Fairness_AI4Good_NeurIPS_2026.pdf" target="_blank" rel="noopener">PDF</a><a href="https://github.com/steveng9/CausalFairnessInSDG" target="_blank" rel="noopener">Code</a></div>
+      <div class="linkrow"><a href="https://steveng9.github.io/Causal-Synthetic-Data-Generator/" target="_blank" rel="noopener">Causal graph lab (live)</a><a href="https://arxiv.org/abs/2609.03180" target="_blank" rel="noopener">arXiv</a><a href="pdfs/Causal_Fairness_AI4Good_NeurIPS_2026.pdf" target="_blank" rel="noopener">PDF</a><a href="https://github.com/steveng9/CausalFairnessInSDG" target="_blank" rel="noopener">Code</a></div>
     </div>
   </article>
 
@@ -966,6 +967,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: 
       <div class="toy-ctrls" id="toy-ctrls"></div>
       <output class="toy-read" id="toy-read" aria-live="polite"></output>
       <p class="toy-hint" id="toy-hint"></p>
+      <div class="linkrow" id="toy-more" hidden></div>
     </div>
   </div>
 </dialog>
@@ -1795,6 +1797,7 @@ const TOYS = {
     tag: "Toy 4 · fairness", title: "Cut the edge", a: "#23a565", b: "#ef7a1a", warm: 2.5,
     cap: "A causal generator samples each column from its parents in a graph, so whatever it releases follows the arrows. Orange marks influence that starts at the protected attribute (here, sex). Cut the edge from sex straight into income and the generator becomes unaware of sex when it sets income; cut every edge out of sex and no path is left, which gives demographic parity. The bars are toy numbers. In the paper, these cuts carried over to nine generators from three families, at a cost to a downstream classifier of about 0.07 to 0.15 AUC on average.",
     hint: "Click an edge to cut it, and again to restore it.",
+    more: ["Draw your own graph in the causal graph lab", "https://steveng9.github.io/Causal-Synthetic-Data-Generator/"],
     make(S, A, B) {
       const N = { s: [.13, .24, "sex"], e: [.13, .8, "education"], o: [.5, .55, "occupation"], y: [.86, .3, "income"] };
       const E = [["s", "o"], ["s", "y"], ["e", "o"], ["e", "y"], ["o", "y"]].map(([u, v]) => ({ u, v, cut: false }));
@@ -1988,6 +1991,9 @@ function toys() {
     dlg.style.setProperty("--toy-a", def.a); dlg.style.setProperty("--toy-b", def.b);
     $("#toy-eyebrow").innerHTML = `<i></i>${esc(def.tag)}`;
     $("#toy-title").textContent = def.title; $("#toy-cap").textContent = def.cap; $("#toy-hint").textContent = def.hint;
+    const more = $("#toy-more");
+    more.hidden = !def.more;
+    more.innerHTML = def.more ? `<a href="${def.more[1]}" target="_blank" rel="noopener">${esc(def.more[0])}</a>` : "";
     big && big.stop();
     stage.innerHTML = `<canvas role="img" aria-label="${esc(def.title)}, interactive. ${esc(def.cap)}"></canvas>`;
     const show = () => { dlg.showModal(); big = mountToy($("canvas", stage), def, true, sync); controls(big); sync(big.scene); };
